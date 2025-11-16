@@ -7,3 +7,5 @@ __pycache__
 .DS_Store
 go2_robot_sdk/.coverage
 go2_robot_sdk/coverage.xml
+.env.local
+.env.*.local
