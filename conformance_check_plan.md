@@ -90,10 +90,10 @@ graph TD
 ## 5. 資源確認清單
 | 項目 | 需求 | 狀態 | 行動 |
 |------|------|------|------|
-| GPU 伺服器 | RTX 4080 + 32GB RAM + 100GB SSD | 確認中 | ROY W1 驗證 |
-| Gemini API | 開發額度 10K/月 | Waiting List | 立即申請/追蹤 |
-| 網路/DNS | pip apt 正常 (WSL proxy) | ❌ 阻 | 設 proxy/http_proxy 或 Docker |
-| Isaac Sim | 2023.1.1 + Orbit 0.3.0 | ❌ 未裝 | W1-W4 安裝 |
+| GPU 伺服器 | ✅ **Quadro RTX 8000 48GB（遠端 SSH）** | ✅ 已確認 | ROY 完成驗證 |
+| Gemini API | 開發額度 10K/月 | Waiting List | 立即申請/追蹤（備案：本地 LLaVA） |
+| 網路/DNS | pip apt 正常 (WSL proxy) | ❌ 待修復 | 設 proxy/http_proxy 或 Docker |
+| Isaac Sim | 2023.1.1 + Orbit 0.3.0 | ❌ 待部署至遠端伺服器 | W7-W8 安裝（詳見 docs/remote_gpu_setup.md） |
 
 ## 6. 風險管理 (Plan A/B/C)
 | 風險 | 等級 | 緩解 | Plan B (Demo) | Plan C (最低) |

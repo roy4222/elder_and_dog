@@ -101,7 +101,7 @@ source /opt/ros/humble/setup.bash
 
 # 3. 安裝專案依賴
 cd /mnt/c/Users/User/Desktop/fju-go2-sdk
-pip install -r src/requirements.txt
+pip install -r requirements.txt  # 專案根目錄的 requirements.txt
 rosdep install --from-paths src --ignore-src -r -y
 
 # 4. 驗證編譯
@@ -156,7 +156,7 @@ vision_vlm/
 **A. 建立座標轉換套件**
 ```bash
 ros2 pkg create --build-type ament_python coordinate_transformer \
-  --dependencies rclpy geometry_msgs sensor_msgs tf2_ros cv_bridge
+  --dependencies rclpy sensor_msgs geometry_msgs vision_msgs tf2_ros cv_bridge message_filters
 ```
 
 **B. 實作 Plan A：LiDAR 點雲投影法**
@@ -185,7 +185,7 @@ ros2 pkg create --build-type ament_python coordinate_transformer \
 
 #### 📊 週末驗收標準
 - ✅ 座標轉換節點能正常運行
-- ✅ 水平誤差 < 20cm（初步目標）
+- ✅ 水平誤差 < 20cm（W7-W8 驗收門檻，最終目標 < 15cm）
 - ✅ 在 RViz 中可視化轉換結果（發佈 Marker）
 
 ---

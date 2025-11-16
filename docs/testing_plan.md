@@ -39,7 +39,7 @@
 
 ### 1. VLM 節點測試
 
-**測試檔案：** `vision_vlm/test/test_gemini_api.py`
+**測試檔案：** `vision_vlm/test/test_api_client.py`（與 gemini_vlm_development.md 一致）
 
 ```python
 import unittest
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 **執行**：
 ```bash
 cd src/vision_vlm
-pytest test/test_gemini_api.py -v
+pytest test/test_api_client.py -v
 ```
 
 ---
@@ -276,7 +276,7 @@ ros2 topic echo /object_pose_world
 **驗收標準**：
 - ✅ VLM 識別延遲 < 2 秒
 - ✅ 座標轉換延遲 < 0.5 秒
-- ✅ 座標誤差 < 20cm（與模擬器真實位置比較）
+- ✅ 座標誤差 < 20cm（W7-W8 驗收門檻，與模擬器真實位置比較，最終目標 < 15cm）
 
 ---
 

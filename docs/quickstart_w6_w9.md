@@ -4,6 +4,20 @@
 **預計時長：** 4 週（W6-W9）
 **最終目標：** 在 Isaac Sim 中完成端到端尋物 Demo
 
+**專案結構假設：**
+```
+~/workspace/
+└── fju-go2-sdk/              # 本專案（Git 倉庫根目錄）
+    ├── src/                  # ROS2 套件目錄
+    │   ├── go2_robot_sdk/
+    │   ├── go2_interfaces/
+    │   └── ...
+    ├── requirements.txt      # Python 依賴（專案根目錄）
+    ├── build/                # colcon build 輸出
+    ├── install/              # colcon install 輸出
+    └── log/                  # colcon 日誌
+```
+
 ---
 
 ## 📅 週次概覽
@@ -76,7 +90,7 @@ cd ~/workspace/fju-go2-sdk
 
 # 安裝依賴
 rosdep install --from-paths src --ignore-src -r -y
-pip install -r src/requirements.txt
+pip install -r requirements.txt  # 專案根目錄的 requirements.txt
 
 # 編譯
 colcon build

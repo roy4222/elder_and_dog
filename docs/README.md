@@ -26,6 +26,7 @@
 | 文件 | 內容 | 關鍵性 |
 |------|------|--------|
 | [isaac_sim_integration.md](./isaac_sim_integration.md) | Isaac Sim + go2_omniverse 整合 | 🔴 高 |
+| [remote_gpu_setup.md](./remote_gpu_setup.md) | **🆕 遠端 GPU 伺服器配置**（Quadro RTX 8000 48GB） | 🔴 高 |
 | [package_structure.md](./package_structure.md) | 套件結構與依賴管理 | 🟡 中 |
 
 ### 🧪 測試與驗收

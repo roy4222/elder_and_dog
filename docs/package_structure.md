@@ -255,7 +255,7 @@ done
 ### requirements.txt（專案根目錄）
 
 ```
-# src/requirements.txt（新增以下內容）
+# requirements.txt（專案根目錄，新增以下內容）
 
 # VLM 相關
 google-generativeai>=0.3.0
@@ -273,8 +273,8 @@ scipy>=1.10.0
 # 系統依賴（ROS2）
 rosdep install --from-paths src --ignore-src -r -y
 
-# Python 依賴
-pip install -r src/requirements.txt
+# Python 依賴（專案根目錄）
+pip install -r requirements.txt
 ```
 
 ---
@@ -347,6 +347,7 @@ graph TD
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
+from launch.conditions import IfCondition  # ← 新增此行（修正缺少的 import）
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import os

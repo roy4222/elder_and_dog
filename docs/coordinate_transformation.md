@@ -5,6 +5,10 @@
 **開發週次：** W7-W8
 **難度：** ⭐⭐⭐⭐ 高
 
+**重要提醒：**
+- 本文件中使用 `camera_link` 代表相機座標系 frame，實際實作時請對應真實 URDF 中的 frame 名稱（可能是 `front_camera_link` 或其他）
+- 使用前請先執行 `ros2 run tf2_tools view_frames` 確認實際 frame 名稱
+
 ---
 
 ## 📋 目標
@@ -234,7 +238,7 @@ class ProjectionUtils:
     def project_3d_to_2d(
         points_3d: np.ndarray,
         K: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         將 3D 點投影到 2D 圖像平面
 
@@ -245,6 +249,7 @@ class ProjectionUtils:
         Returns:
             u: N array (x 像素座標)
             v: N array (y 像素座標)
+            valid_mask: N boolean array (有效點的遮罩，Z > 0)
         """
         # 只保留相機前方的點（Z > 0）
         valid_mask = points_3d[:, 2] > 0

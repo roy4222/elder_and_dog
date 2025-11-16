@@ -99,8 +99,14 @@ cd src/
 ros2 pkg create --build-type ament_python vision_vlm \
   --dependencies rclpy sensor_msgs vision_msgs cv_bridge std_msgs
 
-# 安裝額外 Python 依賴
-pip install google-generativeai pillow numpy
+# 安裝額外 Python 依賴（建議加到專案根目錄 requirements.txt）
+# 在專案根目錄的 requirements.txt 中新增：
+# google-generativeai>=0.3.0
+# pillow>=10.0.0
+# numpy
+cd ~/workspace/fju-go2-sdk
+pip install -r requirements.txt  # 或直接安裝
+# pip install google-generativeai pillow numpy
 ```
 
 ### 2. `package.xml` 配置
