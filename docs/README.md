@@ -96,6 +96,7 @@ source install/setup.bash
 若要快速驗證導航（Nav2）是否正常，可執行：
 
 ```bash
+export ROBOT_IP="192.168.12.1"
 ros2 launch go2_robot_sdk robot.launch.py slam:=true nav2:=true
 ```
 

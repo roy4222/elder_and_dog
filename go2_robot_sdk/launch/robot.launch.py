@@ -197,7 +197,7 @@ class Go2NodeFactory:
                 executable='lidar_to_pointcloud',
                 name='lidar_to_pointcloud',
                 parameters=[{
-                    'robot_ip_lst': self.config.robot_ip_list,
+                    'robot_ip_lst': self.config.robot_ip_list if self.config.robot_ip_list else [''],
                     'map_name': self.config.map_name,
                     'map_save': self.config.save_map
                 }],

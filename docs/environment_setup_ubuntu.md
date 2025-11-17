@@ -199,6 +199,15 @@ ros2 launch go2_robot_sdk robot.launch.py \
 
 ## 8️⃣ 常見問題建議檢查項
 
-- `ros2` 指令找不到：確認有沒有 `source /opt/ros/humble/setup.bash`  
-- `go2_robot_sdk` 找不到：確認有沒有在 Workspace 根目錄 `colcon build`，並 `source install/setup.bash`  
+- `ros2` 指令找不到：確認有沒有 `source /opt/ros/humble/setup.bash`
+- `go2_robot_sdk` 找不到：確認有沒有在 Workspace 根目錄 `colcon build`，並 `source install/setup.bash`
 - Nav2 / SLAM 無法啟動：重新檢查 `rosdep install --from-paths src --ignore-src -r -y` 是否有成功執行，且沒有未解決的依賴錯誤。
+- **啟動時出現 `Expected 'value' to be one of [...], but got '()' of type '<class 'tuple'>'` 錯誤**：
+  - **原因**：未設定 `ROBOT_IP` 環境變數時，空的 list `[]` 被 ROS2 參數系統轉換成 tuple `()` 導致型別檢查失敗
+  - **解決方法**：已在 `robot.launch.py:200` 修正，空 list 會自動轉換為 `['']`
+  - **建議**：啟動前務必設定正確的機器人 IP：
+    ```bash
+    export ROBOT_IP="192.168.1.100"  # 單機器人
+    # 或
+    export ROBOT_IP="192.168.1.100,192.168.1.101"  # 多機器人
+    ```
