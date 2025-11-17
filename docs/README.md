@@ -80,6 +80,27 @@
 
 ---
 
+### 🖥️ 每次在 Ubuntu 啟動開發環境（常用指令）
+
+每次開新 Terminal 建議先執行以下指令，載入 ROS2、uv 以及本專案 workspace：
+
+```bash
+source /opt/ros/humble/setup.bash
+source "$HOME/.local/bin/env"
+
+cd ~/ros2_ws
+source .venv/bin/activate
+source install/setup.bash
+```
+
+若要快速驗證導航（Nav2）是否正常，可執行：
+
+```bash
+ros2 launch go2_robot_sdk robot.launch.py slam:=true nav2:=true
+```
+
+---
+
 ## 📊 文件對照表（Goal.md vs 開發文件）
 
 | Goal.md 目標 | 對應開發文件 | 實作週次 |
