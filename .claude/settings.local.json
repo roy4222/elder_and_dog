@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git submodule update:*)",
+      "Bash(uv --version:*)",
+      "Bash(uv pip install:*)",
+      "Bash(uv venv:*)"
     ],
     "deny": [],
     "ask": []
