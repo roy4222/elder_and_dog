@@ -325,6 +325,86 @@ monitor_state() {
 }
 
 # ==========================================
+# P0 - 坐下命令驗證（測試序列）
+# ==========================================
+
+posture_test() {
+  echo ""
+  echo -e "${BLUE}========================================${NC}"
+  echo -e "${BLUE}  坐下命令驗證序列${NC}"
+  echo -e "${BLUE}========================================${NC}"
+  echo ""
+  echo -e "${YELLOW}本測試將系統地驗證所有坐下/站起相關命令的實際行為${NC}"
+  echo ""
+  echo -e "${YELLOW}✓ 測試計劃：${NC}"
+  echo "  1. 確認機器人當前狀態（應站立）"
+  echo "  2. 執行 standdown (api_id: 1005) - 預期：站立改姿態準備坐下"
+  echo "  3. 執行 sit (api_id: 1009) - 預期：坐下（下半身坐下或完全坐下？）"
+  echo "  4. 執行 risefit (api_id: 1010) - 預期：從坐下站起"
+  echo "  5. 執行 stand (api_id: 1004) - 預期：完全站起"
+  echo ""
+  echo -e "${CYAN}開始測試序列...${NC}"
+  echo ""
+
+  # 步驟 1: 確認當前狀態
+  echo -e "${YELLOW}[步驟 1/5] 檢查當前狀態（等待 2 秒讓機器人穩定）${NC}"
+  sleep 2
+  echo -e "${GREEN}✓ 請觀察機器人狀態${NC}"
+  echo ""
+
+  # 步驟 2: standdown
+  echo -e "${YELLOW}[步驟 2/5] 執行 standdown (api_id: 1005)${NC}"
+  cmd_standdown
+  echo -e "${CYAN}等待 3 秒讓機器人完成動作...${NC}"
+  sleep 3
+  echo -e "${GREEN}✓ 請觀察機器人是否改變姿態（但仍站立）${NC}"
+  echo ""
+
+  # 步驟 3: sit
+  echo -e "${YELLOW}[步驟 3/5] 執行 sit (api_id: 1009)${NC}"
+  cmd_sit
+  echo -e "${CYAN}等待 3 秒讓機器人完成動作...${NC}"
+  sleep 3
+  echo -e "${GREEN}✓ 請觀察機器人是否：${NC}"
+  echo "    - 只有下半身坐下？"
+  echo "    - 完全坐下（屁股著地）？"
+  echo ""
+
+  # 步驟 4: risefit
+  echo -e "${YELLOW}[步驟 4/5] 執行 risefit (api_id: 1010)${NC}"
+  cmd_risefit
+  echo -e "${CYAN}等待 3 秒讓機器人完成動作...${NC}"
+  sleep 3
+  echo -e "${GREEN}✓ 請觀察機器人是否從坐下狀態站起${NC}"
+  echo ""
+
+  # 步驟 5: stand
+  echo -e "${YELLOW}[步驟 5/5] 執行 stand (api_id: 1004)${NC}"
+  cmd_stand
+  echo -e "${CYAN}等待 3 秒讓機器人完成動作...${NC}"
+  sleep 3
+  echo -e "${GREEN}✓ 機器人應回到完全站立狀態${NC}"
+  echo ""
+
+  # 測試完成
+  echo -e "${BLUE}========================================${NC}"
+  echo -e "${GREEN}✓ 測試序列完成${NC}"
+  echo -e "${BLUE}========================================${NC}"
+  echo ""
+  echo -e "${YELLOW}📝 記錄結果（請根據實際觀察更新）：${NC}"
+  echo ""
+  echo "API ID | 命令名稱  | 實際行為 | 說明"
+  echo "-------|----------|--------|-----"
+  echo "1005   | standdown | ??     | 需觀察"
+  echo "1009   | sit       | ??     | 需觀察（下半身 vs 完全坐下）"
+  echo "1010   | risefit   | ??     | 需觀察"
+  echo "1004   | stand     | ??     | 需觀察"
+  echo ""
+  echo -e "${CYAN}請將觀察結果回報到 GitHub Issues 或開發文件中${NC}"
+  echo ""
+}
+
+# ==========================================
 # P0 - 系統診斷
 # ==========================================
 
@@ -439,6 +519,7 @@ Go2 機器人測試腳本 - P0 核心版
   state                機器狀態
 
 系統診斷：
+  posture-test         坐下命令驗證序列（自動化測試）
   health               系統健康檢查
   list-topics          列出所有 topics
   list-nodes           列出所有節點
@@ -509,10 +590,11 @@ main() {
     state)    monitor_state ;;
 
     # 系統診斷
-    health)      system_health ;;
-    list-topics) list_topics ;;
-    list-nodes)  list_nodes ;;
-    help)        show_help ;;
+    posture-test) posture_test ;;
+    health)       system_health ;;
+    list-topics)  list_topics ;;
+    list-nodes)   list_nodes ;;
+    help)         show_help ;;
 
     # 未知命令
     *)
