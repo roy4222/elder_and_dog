@@ -9,3 +9,5 @@ go2_robot_sdk/.coverage
 go2_robot_sdk/coverage.xml
 .env.local
 .env.*.local
+.venv310/
+.claude/

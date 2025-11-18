@@ -28,9 +28,12 @@ from ..application.services import RobotDataService, RobotControlService
 from ..infrastructure.ros2 import ROS2Publisher
 from ..infrastructure.webrtc import WebRTCAdapter
 
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(
+    level=logging.DEBUG,  # 允許所有日誌級別通過
+    format='%(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)  # 設定 go2_driver_node 為 DEBUG 級別
 
 
 class Go2DriverNode(Node):

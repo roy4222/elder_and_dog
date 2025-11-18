@@ -14,7 +14,7 @@ import json
 import logging
 import base64
 from typing import Callable, Optional, Any, Dict, Union
-from aiortc import RTCPeerConnection, RTCSessionDescription, MediaStreamTrack
+from aiortc import RTCPeerConnection, RTCSessionDescription, MediaStreamTrack, RTCConfiguration, RTCIceServer
 
 from .crypto.encryption import CryptoUtils, ValidationCrypto, PathCalculator, EncryptionError
 from .http_client import HttpClient, WebRTCHttpError
@@ -43,7 +43,15 @@ class Go2Connection:
         on_video_frame: Optional[Callable] = None,
         decode_lidar: bool = True,
     ):
-        self.pc = RTCPeerConnection()
+        # 配置 STUN 伺服器以支援 NAT 穿透（特別是在 WSL2 環境中）
+        ice_servers = [
+            RTCIceServer(["stun:stun.l.google.com:19302"]),
+            RTCIceServer(["stun:stun1.l.google.com:19302"]),
+        ]
+        config = RTCConfiguration(iceServers=ice_servers)
+        self.pc = RTCPeerConnection(configuration=config)
+        logger.info("RTCPeerConnection 已配置 STUN 伺服器以支援 NAT 穿透")
+
         self.robot_ip = robot_ip
         self.robot_num = str(robot_num)
         self.token = token
@@ -65,30 +73,59 @@ class Go2Connection:
         self.data_channel = self.pc.createDataChannel("data", id=0)
         self.data_channel.on("open", self.on_data_channel_open)
         self.data_channel.on("message", self.on_data_channel_message)
-        
+        self.data_channel.on("close", self.on_data_channel_close)
+        self.data_channel.on("error", self.on_data_channel_error)
+
         # Setup peer connection events
         self.pc.on("track", self.on_track)
         self.pc.on("connectionstatechange", self.on_connection_state_change)
-        
+        self.pc.on("iceconnectionstatechange", self.on_ice_connection_state_change)
+        self.pc.on("signalingstatechange", self.on_signaling_state_change)
+        self.pc.on("icegatheringstatechange", self.on_ice_gathering_state_change)
+
         # Add video transceiver if video callback provided
         if self.on_video_frame:
             self.pc.addTransceiver("video", direction="recvonly")
     
     def on_connection_state_change(self) -> None:
         """Handle peer connection state changes"""
-        logger.info(f"Connection state is {self.pc.connectionState}")
-        
+        logger.info(f"[診斷] Connection state: {self.pc.connectionState}")
+
         # Note: Validation is handled after successful WebRTC connection
         # in the original implementation, not here
-    
+
+    def on_ice_connection_state_change(self) -> None:
+        """Handle ICE connection state changes"""
+        logger.info(f"[診斷] ICE connection state: {self.pc.iceConnectionState}")
+
+    def on_signaling_state_change(self) -> None:
+        """Handle signaling state changes"""
+        logger.info(f"[診斷] Signaling state: {self.pc.signalingState}")
+
+    def on_ice_gathering_state_change(self) -> None:
+        """Handle ICE gathering state changes"""
+        logger.info(f"[診斷] ICE gathering state: {self.pc.iceGatheringState}")
+
+    def on_data_channel_close(self) -> None:
+        """Handle data channel close event"""
+        logger.warning(f"[診斷] Data channel closed. State: {self.data_channel.readyState}")
+
+    def on_data_channel_error(self, error: Exception) -> None:
+        """Handle data channel error event"""
+        logger.error(f"[診斷] Data channel error: {error}")
+
     def on_data_channel_open(self) -> None:
         """Handle data channel open event"""
-        logger.info("Data channel is open")
-        
+        logger.info("[診斷] ✅ Data channel is open (aiortc event triggered)")
+        logger.info(f"[診斷] Data channel readyState: {self.data_channel.readyState}")
+        logger.info(f"[診斷] Connection state: {self.pc.connectionState}")
+        logger.info(f"[診斷] ICE connection state: {self.pc.iceConnectionState}")
+
         # Force data channel to open state if needed (workaround)
         if self.data_channel.readyState != "open":
+            logger.warning(f"[診斷] ⚠️  Data channel readyState was {self.data_channel.readyState}, forcing to open")
             self.data_channel._setReadyState("open")
-        
+
         if self.on_open:
             self.on_open()
     
@@ -226,11 +263,17 @@ class Go2Connection:
     async def connect(self) -> None:
         """Establish WebRTC connection to robot with full encryption"""
         try:
-            logger.info("Trying to send SDP using full encrypted method...")
-            
+            logger.info("[診斷] 開始 WebRTC 握手...")
+            logger.info(f"[診斷] Connection state: {self.pc.connectionState}")
+            logger.info(f"[診斷] ICE connection state: {self.pc.iceConnectionState}")
+            logger.info(f"[診斷] Signaling state: {self.pc.signalingState}")
+
             # Step 1: Create WebRTC offer
+            logger.info("[診斷] 步驟 1: 建立 WebRTC Offer...")
             offer = await self.pc.createOffer()
             await self.pc.setLocalDescription(offer)
+            logger.info(f"[診斷] ✅ Local description set")
+            logger.info(f"[診斷] Signaling state after setLocalDescription: {self.pc.signalingState}")
             
             sdp_offer = self.pc.localDescription
             sdp_offer_json = {
@@ -241,12 +284,14 @@ class Go2Connection:
             }
             
             new_sdp = json.dumps(sdp_offer_json)
-            
+
             # Step 2: Get robot's public key
+            logger.info("[診斷] 步驟 2: 取得機器人公鑰...")
             try:
                 response = self.http_client.get_robot_public_key(self.robot_ip)
                 if not response:
                     raise Go2ConnectionError("Failed to get public key response")
+                logger.info(f"[診斷] ✅ 取得公鑰成功")
                 
                 # Decode the response text from base64
                 decoded_response = base64.b64decode(response.text).decode('utf-8')
@@ -270,38 +315,51 @@ class Go2Connection:
                 raise Go2ConnectionError(f"Failed to get robot public key: {e}")
             
             # Step 3: Encrypt and send SDP
+            logger.info("[診斷] 步驟 3: 加密並發送 SDP...")
             try:
                 # Generate AES key
                 aes_key = CryptoUtils.generate_aes_key()
-                
+                logger.info(f"[診斷] ✅ AES 金鑰已生成")
+
                 # Load Public Key
                 public_key = CryptoUtils.rsa_load_public_key(public_key_pem)
-                
+                logger.info(f"[診斷] ✅ RSA 公鑰已載入")
+
                 # Encrypt the SDP and AES key
                 encrypted_body = {
                     "data1": CryptoUtils.aes_encrypt(new_sdp, aes_key),
                     "data2": CryptoUtils.rsa_encrypt(aes_key, public_key),
                 }
-                
+                logger.info(f"[診斷] ✅ SDP 已加密")
+
                 # Send the encrypted data
+                logger.info(f"[診斷] 發送加密 SDP 到機器人...")
                 response = self.http_client.send_encrypted_sdp(
                     self.robot_ip, path_ending, encrypted_body
                 )
-                
+
                 if not response:
                     raise Go2ConnectionError("Failed to send encrypted SDP")
-                
+                logger.info(f"[診斷] ✅ 取得機器人 Answer")
+
                 # Decrypt the response
                 decrypted_response = CryptoUtils.aes_decrypt(response.text, aes_key)
                 peer_answer = json.loads(decrypted_response)
-                
+
                 # Set remote description
+                logger.info(f"[診斷] 設定遠端描述...")
+                logger.info(f"[診斷] Signaling state before setRemoteDescription: {self.pc.signalingState}")
                 answer = RTCSessionDescription(
-                    sdp=peer_answer['sdp'], 
+                    sdp=peer_answer['sdp'],
                     type=peer_answer['type']
                 )
                 await self.pc.setRemoteDescription(answer)
-                
+                logger.info(f"[診斷] ✅ Remote description set")
+                logger.info(f"[診斷] Signaling state after setRemoteDescription: {self.pc.signalingState}")
+                logger.info(f"[診斷] ICE connection state after remote desc: {self.pc.iceConnectionState}")
+
+                logger.info(f"[診斷] ✅ WebRTC 握手完成（SDP 交換成功）")
+                logger.info(f"[診斷] ⏳ 等待 data channel 開啟... 這需要 ICE 候選項交換和 DTLS 握手完成")
                 logger.info(f"Successfully established WebRTC connection to robot {self.robot_num}")
                 
             except (WebRTCHttpError, EncryptionError) as e:
