@@ -133,7 +133,11 @@ class Go2Connection:
     def on_data_channel_message(self, message: Union[str, bytes]) -> None:
         """Handle incoming data channel messages"""
         try:
-            logger.debug(f"Received message: {message}")
+            # 避免在 DEBUG 模式下把整個二進位封包 dump 出來（voxel_map 會非常大）
+            if isinstance(message, bytes):
+                logger.debug("Received binary message (%d bytes)", len(message))
+            else:
+                logger.debug(f"Received message: {message}")
             
             # Ensure data channel is marked as open
             if self.data_channel.readyState != "open":

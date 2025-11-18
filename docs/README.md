@@ -14,6 +14,7 @@
 |------|------|---------|
 | [integration_plan.md](./integration_plan.md) | **4 週技術整合路線圖**（W6-W9 詳細規劃） | 全體成員（必讀） |
 | [quickstart_w6_w9.md](./quickstart_w6_w9.md) | **快速啟動指南**（每日任務 Checklist） | 開發者 |
+| [dependency_management.md](./dependency_management.md) | **🆕 Python 依賴鎖定與版本管理指南** | 開發者（必讀！） |
 
 ### 🤖 核心技術開發
 | 文件 | 技術領域 | 難度 | 預計時長 |
@@ -30,6 +31,7 @@
 | [remote_gpu_setup.md](./remote_gpu_setup.md) | **🆕 遠端 GPU 伺服器配置**（Quadro RTX 8000 48GB） | 🔴 高 |
 | [package_structure.md](./package_structure.md) | 套件結構與依賴管理 | 🟡 中 |
 | [testing_and_verification.md](./testing_and_verification.md) | **🆕 測試脚本與驗證指南**（TEST.sh 使用） | 🟡 中 |
+| [webrtc_troubleshooting.md](./webrtc_troubleshooting.md) | **🆕 WebRTC 連接除錯指南**（aiortc 版本問題） | 🟡 中 |
 
 ### 🧪 測試與驗收
 | 文件 | 目的 | 使用時機 |
@@ -48,7 +50,29 @@
 3. ./integration_plan.md         # W6-W9 整合規劃
 ```
 
-### 第 2 步：選擇開發任務
+### 第 2 步：確保依賴版本正確（🚨 重要！）
+在開始任何開發前，**必須** 先鎖定 Python 依賴版本：
+```bash
+# 強制安裝 requirements.txt 中指定的版本
+pip install -r requirements.txt --force-reinstall
+
+# 驗證 aiortc 版本（應為 1.9.0，不是 1.14.0）
+python3 -c "import aiortc; print(f'aiortc: {aiortc.__version__}')"
+```
+⚠️ **警告**：pip 自動升級依賴會導致 WebRTC SCTP 握手失敗！詳見 [dependency_management.md](./dependency_management.md)
+
+### 第 3 步：驗證 WebRTC 連接
+確保 Go2 機器人能正常連接：
+```bash
+# 啟動驅動（應顯示 "Robot validation successful"）
+bash start_go2_simple.sh
+
+# 測試 stand 命令（檢查機器人是否站起來）
+ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq "{topic: 'rt/api/sport/request', api_id: 1004}"
+```
+若連接失敗，參考 [webrtc_troubleshooting.md](./webrtc_troubleshooting.md)
+
+### 第 4 步：選擇開發任務
 根據您的專長，選擇以下任務之一：
 
 **任務 A：VLM 視覺識別**（Python, API 整合）
@@ -67,7 +91,7 @@
 - 閱讀：[isaac_sim_integration.md](./isaac_sim_integration.md)
 - 負責：環境部署、ROS2 橋接
 
-### 第 3 步：開始開發
+### 第 5 步：開始開發
 ```bash
 # 遵循每日進度指南
 ./quickstart_w6_w9.md
@@ -257,6 +281,7 @@ rqt_graph
 
 | 版本 | 日期 | 變更內容 | 作者 |
 |------|------|---------|------|
+| v1.2 | 2025/11/18 | 新增 dependency_management.md 與 webrtc_troubleshooting.md；更新快速開始流程 | Claude Code |
 | v1.1 | 2025/11/18 | 新增 testing_and_verification.md（TEST.sh P0 完成） | Claude Code |
 | v1.0 | 2025/11/16 | 初始版本（8 份文件） | Claude + FJU Team |
 
