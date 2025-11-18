@@ -98,6 +98,39 @@ cmd_balance() {
   fi
 }
 
+cmd_standdown() {
+  echo -e "${CYAN}→ 執行：站立改姿態（準備坐下）${NC}"
+  if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
+    "{topic: 'rt/api/sport/request', api_id: 1005}" 2>/dev/null; then
+    echo -e "${GREEN}✓ 指令已發送${NC}"
+  else
+    echo -e "${RED}✗ 發送失敗${NC}"
+    return 1
+  fi
+}
+
+cmd_risefit() {
+  echo -e "${CYAN}→ 執行：從坐下站起${NC}"
+  if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
+    "{topic: 'rt/api/sport/request', api_id: 1010}" 2>/dev/null; then
+    echo -e "${GREEN}✓ 指令已發送${NC}"
+  else
+    echo -e "${RED}✗ 發送失敗${NC}"
+    return 1
+  fi
+}
+
+cmd_recovery() {
+  echo -e "${CYAN}→ 執行：恢復站立（從摔倒恢復）${NC}"
+  if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
+    "{topic: 'rt/api/sport/request', api_id: 1006}" 2>/dev/null; then
+    echo -e "${GREEN}✓ 指令已發送${NC}"
+  else
+    echo -e "${RED}✗ 發送失敗${NC}"
+    return 1
+  fi
+}
+
 cmd_wallow() {
   echo -e "${CYAN}→ 執行：打滾（Wallow）${NC}"
   if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
@@ -372,11 +405,14 @@ Go2 機器人測試腳本 - P0 核心版
   bash TEST.sh <命令>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-基本動作控制：
+基本姿態控制：
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   sit                  坐下（下半身坐下）
   stand                站起
   balance              平衡站立
+  standdown            站立改姿態（準備坐下）
+  risefit              從坐下站起
+  recovery             恢復站立（從摔倒恢復）
 
 娛樂動作：
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -441,17 +477,22 @@ main() {
 
   # 根據命令執行
   case "$1" in
-    # 動作控制
-    sit)      cmd_sit ;;
-    stand)    cmd_stand ;;
-    balance)  cmd_balance ;;
-    wallow)   cmd_wallow ;;
-    hello)    cmd_hello ;;
-    stretch)  cmd_stretch ;;
-    dance1)   cmd_dance1 ;;
-    dance2)   cmd_dance2 ;;
-    flip)     cmd_frontflip ;;
-    jump)     cmd_frontjump ;;
+    # 基本姿態控制
+    sit)        cmd_sit ;;
+    stand)      cmd_stand ;;
+    balance)    cmd_balance ;;
+    standdown)  cmd_standdown ;;
+    risefit)    cmd_risefit ;;
+    recovery)   cmd_recovery ;;
+
+    # 娛樂動作
+    wallow)     cmd_wallow ;;
+    hello)      cmd_hello ;;
+    stretch)    cmd_stretch ;;
+    dance1)     cmd_dance1 ;;
+    dance2)     cmd_dance2 ;;
+    flip)       cmd_frontflip ;;
+    jump)       cmd_frontjump ;;
 
     # 移動控制
     forward)  cmd_forward ;;
