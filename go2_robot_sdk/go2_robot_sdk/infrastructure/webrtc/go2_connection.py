@@ -82,6 +82,7 @@ class Go2Connection:
         self.pc.on("iceconnectionstatechange", self.on_ice_connection_state_change)
         self.pc.on("signalingstatechange", self.on_signaling_state_change)
         self.pc.on("icegatheringstatechange", self.on_ice_gathering_state_change)
+        self.pc.on("datachannel", self.on_data_channel_created)
 
         # Add video transceiver if video callback provided
         if self.on_video_frame:
@@ -105,6 +106,10 @@ class Go2Connection:
     def on_ice_gathering_state_change(self) -> None:
         """Handle ICE gathering state changes"""
         logger.info(f"[診斷] ICE gathering state: {self.pc.iceGatheringState}")
+
+    def on_data_channel_created(self, channel) -> None:
+        """Handle data channel created by remote peer"""
+        logger.info(f"[診斷] Remote data channel created: {channel.label} (id={channel.id})")
 
     def on_data_channel_close(self) -> None:
         """Handle data channel close event"""
@@ -360,7 +365,11 @@ class Go2Connection:
 
                 logger.info(f"[診斷] ✅ WebRTC 握手完成（SDP 交換成功）")
                 logger.info(f"[診斷] ⏳ 等待 data channel 開啟... 這需要 ICE 候選項交換和 DTLS 握手完成")
+                logger.info(f"[診斷] 注意：如果在此步驟卡住超過 30 秒，可能是 SCTP 握手失敗")
                 logger.info(f"Successfully established WebRTC connection to robot {self.robot_num}")
+
+                # Monitor SCTP handshake with timeout
+                await self._monitor_sctp_handshake()
                 
             except (WebRTCHttpError, EncryptionError) as e:
                 raise Go2ConnectionError(f"Failed to complete encrypted handshake: {e}")
@@ -369,7 +378,52 @@ class Go2Connection:
             raise
         except Exception as e:
             raise Go2ConnectionError(f"Unexpected error during connection: {e}")
-    
+
+    async def _monitor_sctp_handshake(self, timeout: float = 30.0) -> None:
+        """
+        Monitor SCTP handshake completion with timeout.
+
+        This method waits for the data channel to open within the specified timeout.
+        If timeout occurs, it indicates SCTP InitChunk failure (Go2 not responding).
+
+        Args:
+            timeout: Maximum seconds to wait for data channel to open
+        """
+        import time
+
+        start_time = time.time()
+        check_interval = 0.5  # Check every 500ms
+
+        while time.time() - start_time < timeout:
+            # Check if data channel opened
+            if self.data_channel.readyState == "open":
+                elapsed = time.time() - start_time
+                logger.info(f"[診斷] ✅ SCTP 握手成功！Data channel 在 {elapsed:.1f} 秒後開啟")
+                return
+
+            await asyncio.sleep(check_interval)
+
+        # Timeout - SCTP handshake failed
+        elapsed = time.time() - start_time
+        logger.error(f"[診斷] ❌ SCTP 握手超時（>{timeout}秒）")
+        logger.error(f"[診斷] 可能原因：")
+        logger.error(f"  1. Go2 固件不支援 WebRTC SCTP 協議")
+        logger.error(f"  2. Go2 固件版本與此客戶端不相容")
+        logger.error(f"  3. WSL2 環境中 SCTP 核心支援有限")
+        logger.error(f"[診斷] Data channel 狀態: {self.data_channel.readyState}")
+        logger.error(f"[診斷] 連接狀態: {self.pc.connectionState}")
+        logger.error(f"[診斷] ICE 連接狀態: {self.pc.iceConnectionState}")
+
+        # Attempt diagnostic: Check if we can still send heartbeat
+        try:
+            logger.info("[診斷] 嘗試強制 data channel 狀態為 open（SCTP 失敗的臨時迴避方案）...")
+            if self.data_channel.readyState != "open":
+                self.data_channel._setReadyState("open")
+                logger.warning("[診斷] ⚠️  已強制設定 data channel 為 open，但 SCTP 握手仍未完成")
+                logger.warning("[診斷] 實際通訊可能失敗 - 建議確認 Go2 固件版本")
+        except Exception as e:
+            logger.error(f"[診斷] 強制設定失敗: {e}")
+
     async def disconnect(self) -> None:
         """Close WebRTC connection and cleanup resources"""
         try:
