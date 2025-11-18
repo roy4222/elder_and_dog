@@ -14,7 +14,7 @@ import json
 import logging
 import base64
 from typing import Callable, Optional, Any, Dict, Union
-from aiortc import RTCPeerConnection, RTCSessionDescription, MediaStreamTrack, RTCConfiguration, RTCIceServer
+from aiortc import RTCPeerConnection, RTCSessionDescription, MediaStreamTrack
 
 from .crypto.encryption import CryptoUtils, ValidationCrypto, PathCalculator, EncryptionError
 from .http_client import HttpClient, WebRTCHttpError
@@ -43,14 +43,10 @@ class Go2Connection:
         on_video_frame: Optional[Callable] = None,
         decode_lidar: bool = True,
     ):
-        # 配置 STUN 伺服器以支援 NAT 穿透（特別是在 WSL2 環境中）
-        ice_servers = [
-            RTCIceServer(["stun:stun.l.google.com:19302"]),
-            RTCIceServer(["stun:stun1.l.google.com:19302"]),
-        ]
-        config = RTCConfiguration(iceServers=ice_servers)
-        self.pc = RTCPeerConnection(configuration=config)
-        logger.info("RTCPeerConnection 已配置 STUN 伺服器以支援 NAT 穿透")
+        # 使用預設 RTCPeerConnection 配置（不帶 STUN）
+        # 在同一 LAN 內，host candidates 通常足夠；STUN 可能在某些 aiortc 版本導致 SCTP 握手問題
+        self.pc = RTCPeerConnection()
+        logger.info("RTCPeerConnection initialized with default configuration")
 
         self.robot_ip = robot_ip
         self.robot_num = str(robot_num)
