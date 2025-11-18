@@ -50,27 +50,32 @@
 3. ./integration_plan.md         # W6-W9 整合規劃
 ```
 
-### 第 2 步：確保依賴版本正確（🚨 重要！）
-在開始任何開發前，**必須** 先鎖定 Python 依賴版本：
+### 第 2 步：確保依賴版本合理且一致（🚨 重要！）
+在開始任何開發前，**強烈建議** 先鎖定 Python 依賴版本，避免不同機器 / 不同時間安裝出現微妙差異：
 ```bash
-# 強制安裝 requirements.txt 中指定的版本
-pip install -r requirements.txt --force-reinstall
+# 強制安裝 requirements.txt 中目前指定的版本
+uv pip install -r requirements.txt --force-reinstall
 
-# 驗證 aiortc 版本（應為 1.9.0，不是 1.14.0）
+# 驗證 aiortc 版本（目前專案預期為 1.9.0）
 python3 -c "import aiortc; print(f'aiortc: {aiortc.__version__}')"
 ```
-⚠️ **警告**：pip 自動升級依賴會導致 WebRTC SCTP 握手失敗！詳見 [dependency_management.md](./dependency_management.md)
+⚠️ **提醒**：曾觀察到某些情況下，依賴解析會把 `aiortc` 拉到 1.14.0 以上並搭配 STUN 配置，導致 SCTP 握手問題；為降低風險，目前先建議固定在 1.9.0，詳細脈絡請見 [dependency_management.md](./dependency_management.md)。
 
 ### 第 3 步：驗證 WebRTC 連接
 確保 Go2 機器人能正常連接：
 ```bash
-# 啟動驅動（應顯示 "Robot validation successful"）
+# 啟動驅動（觀察是否能穩定連線與收到狀態資料）
 bash start_go2_simple.sh
 
 # 測試 stand 命令（檢查機器人是否站起來）
 ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq "{topic: 'rt/api/sport/request', api_id: 1004}"
 ```
-若連接失敗，參考 [webrtc_troubleshooting.md](./webrtc_troubleshooting.md)
+實務上，比較可靠的判斷方式是：
+- 連線過程中 ICE / connection state 會進到 `completed` / `connected`；  
+- data channel 狀態為 `open`；  
+- 日誌中持續出現 `rt/lf/lowstate`、`rt/utlidar/robot_pose` 等訊息。  
+
+若連接失敗（尤其是 `/con_notify` HTTP timeout 或 data channel 一直是 `connecting`），請參考 [webrtc_troubleshooting.md](./webrtc_troubleshooting.md)。
 
 ### 第 4 步：選擇開發任務
 根據您的專長，選擇以下任務之一：

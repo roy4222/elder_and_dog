@@ -3,6 +3,10 @@
 **適用對象：** 在 Ubuntu 上開發本專案（包含導航、尋物、Isaac Sim 等）的開發者  
 **建議版本：** Ubuntu 22.04 + ROS2 Humble
 
+> ℹ️ 名稱說明：  
+> - 本文件最初是以 `fju-go2-sdk` 為專案根目錄撰寫。  
+> - 若你是直接使用目前的 `elder_and_dog` 專案，請將文中的 `src/fju-go2-sdk` / `fju-go2-sdk` 路徑，對應到實際的專案根目錄（例如：`~/elder_and_dog` 或 `~/ros2_ws/src/elder_and_dog`）。
+
 ---
 
 ## 1️⃣ 系統基本工具安裝（只需一次）
@@ -140,7 +144,7 @@ uv pip install -r src/fju-go2-sdk/requirements.txt
 
 ```bash
 cd ~/ros2_ws
-pip install -r src/fju-go2-sdk/requirements.txt
+uv pip install -r src/fju-go2-sdk/requirements.txt
 ```
 
 目前 `requirements.txt` 主要包含：

@@ -57,6 +57,11 @@ bash start_go2_simple.sh
 [INFO] [go2_driver_node-3]: Video frame received for robot 0
 ```
 
+> ℹ️ 說明：  
+> - 若 WebRTC 尚未成功建立（例如 `/con_notify` HTTP timeout、data channel 一直停在 `connecting`），那麼 `TEST.sh` 中的 sit/stand/forward 等動作指令**可能不會生效**。  
+> - 在這種情況下，請先依照 [webrtc_troubleshooting.md](./webrtc_troubleshooting.md) 的流程，確認 `aiortc` 版本、Go2 模式與 HTTP `/con_notify` 是否正常（可用 `curl` 測試）。  
+> - 在 WSL2 環境下，偶爾會遇到網路 / 虛擬網卡特有問題，若多次嘗試仍不穩定，建議在原生 Ubuntu 機器交叉驗證一次。
+
 2. **準備測試環境**（終端 2）
 
 ```bash

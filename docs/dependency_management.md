@@ -8,29 +8,32 @@
 
 ## 📋 概述
 
-本指南說明如何正確管理項目的 Python 依賴，避免版本衝突導致的隱蔽 bug。
+本指南說明如何正確管理項目的 Python 依賴，降低版本衝突導致的隱蔽 bug 風險。
 
-**核心問題**: 2025/11/18 發現 WebRTC SCTP 握手失敗的根本原因是 `aiortc` 版本不匹配（期望 1.9.0，實際 1.14.0），結合 STUN 配置導致。
+**重要說明**：  
+- 2025/11/18 的一次除錯過程中，有觀察到「`aiortc 1.14.0 + STUN 配置`」會讓 SCTP 握手變得極不穩定，降回 `aiortc==1.9.0` 並移除 STUN 後，WebRTC 確實恢復正常。  
+- 這是「已觀察到的高風險組合」，**不是唯一被 100% 證實的根本原因**，之後仍持續在 WSL2 / 原生 Linux / 不同固件版本上做交叉驗證。  
+- 因此，本文件偏向「建議與風險提示」，而不是宣稱「所有 WebRTC 問題都一定是 aiortc 版本造成」。
 
 ---
 
 ## 🔍 版本問題的症狀
 
-### WebRTC 連接故障案例（已解決）
+### WebRTC 連接故障案例（已觀察到的案例）
 
 | 症狀 | 原因 | 解決方案 |
 |------|------|--------|
-| SCTP InitChunk timeout × 9（30+ 秒） | aiortc 1.14.0 + STUN 配置衝突 | 降級到 1.9.0，移除 STUN |
-| Data channel 永遠停留在 "connecting" | 同上 | 同上 |
-| 感測器能接收但控制指令無效 | SCTP 握手失敗 | 同上 |
+| SCTP InitChunk timeout × 9（30+ 秒） | 某次環境下的 aiortc 1.14.0 + STUN 配置衝突 | 降級到 1.9.0，移除 STUN（該次案例有效） |
+| Data channel 永遠停留在 "connecting" | 可能是 SCTP 握手問題（版本 / 網路 / WSL2 等） | 先確認版本與 STUN，再依 webrtc_troubleshooting.md 排查 |
+| 感測器能接收但控制指令無效 | Data channel 未真正建立或 WebRTC 端口不可達 | 參考 webrtc_troubleshooting.md 中的診斷步驟 |
 
 ---
 
 ## 🚀 快速修復（如果遇到 WebRTC 問題）
 
 ```bash
-# 步驟 1: 強制安裝正確版本
-pip install aiortc==1.9.0 --force-reinstall
+# 步驟 1: 強制安裝目前專案預期的版本
+uv pip install aiortc==1.9.0 --force-reinstall
 
 # 步驟 2: 驗證版本
 python3 -c "import aiortc; print(f'aiortc version: {aiortc.__version__}')"
@@ -64,11 +67,11 @@ geometry-msgs           # ROS2 消息（來自 go2_interfaces）
 nav2-msgs               # ROS2 導航消息
 ```
 
-### 數據處理與科學計算
+### 數據處理與科學計算（依實際需求選用）
 
 ```
-numpy==1.26.4           # 數值計算
-scipy==1.8.0            # ⚠️ 降級到 1.8.0 以避免 numpy 相容性問題
+numpy==1.26.4           # 數值計算（目前 requirements.txt 中指定的版本）
+scipy                   # （可選）視 lidar/感測器演算法需要再安裝，相容版本請參考官方文件
 opencv-python           # 影像處理
 open3d                  # 3D 點雲處理
 torch                   # PyTorch（可選，用於物體偵測）
@@ -95,20 +98,20 @@ pydub                   # 語音處理
 
 ## ⚠️ 已知版本衝突與解決方案
 
-### 1. **aiortc 1.14.0 自動升級問題**
+### 1. **aiortc 自動升級問題（曾觀察到的案例）**
 
-**問題**:
-- `requirements.txt` 指定 `aiortc==1.9.0`
-- pip 安裝時自動升級到 1.14.0（可能來自 torch / torchvision 的間接依賴）
-- 導致 SCTP 握手失敗
+**問題（案例）**:
+- 某次環境中，`requirements.txt` 指定 `aiortc==1.9.0`
+- 但安裝時又被其他依賴拉到 1.14.0，並搭配 STUN 配置
+- 在該組合下，確實觀察到 SCTP 握手長時間 timeout
 
 **解決方案**:
 ```bash
-# 方案 A: 強制安裝指定版本（推薦）
-pip install aiortc==1.9.0 --force-reinstall
+# 方案 A: 強制安裝目前專案指定版本（推薦）
+uv pip install aiortc==1.9.0 --force-reinstall
 
-# 方案 B: 更新 requirements.txt 並重新安裝
-pip install -r requirements.txt --force-reinstall
+# 方案 B: 依 requirements.txt 重新安裝
+uv pip install -r requirements.txt --force-reinstall
 
 # 驗證
 python3 -c "import aiortc; assert aiortc.__version__ == '1.9.0'"
@@ -116,15 +119,10 @@ python3 -c "import aiortc; assert aiortc.__version__ == '1.9.0'"
 
 ### 2. **scipy 版本與 numpy 相容性**
 
-**問題**:
-- scipy 1.15.3（新版）與 numpy 1.24.4 有相容性問題
-- 可能導致科學計算出錯
-
-**解決方案**:
-```bash
-# 安裝相容版本
-pip install scipy==1.8.0 numpy==1.26.4
-```
+**說明**：
+- 專案目前只在 `requirements.txt` 中明確鎖定 `numpy==1.26.4`，未強制指定 `scipy` 版本。  
+- 過去有在其他專案遇過「某些 scipy 版本與特定 numpy 組合」的相容性問題，因此建議一律**參考官方相容性矩陣**來選擇搭配。  
+- 若你在本專案中額外安裝 `scipy` 並遇到錯誤，建議先檢查 numpy/scipy 版本是否為官方建議的組合，再視需要回報具體 case。
 
 ### 3. **PyTorch 與系統依賴**
 
@@ -136,10 +134,10 @@ pip install scipy==1.8.0 numpy==1.26.4
 ```bash
 # 根據系統選擇正確的安裝命令
 # CPU-only (最簡單)
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
 # CUDA 12.1
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 
 # 驗證
 python3 -c "import torch; print(f'PyTorch: {torch.__version__}')"
@@ -164,7 +162,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # 步驟 4: 強制安裝 requirements.txt
-pip install -r requirements.txt --force-reinstall
+uv pip install -r requirements.txt --force-reinstall
 
 # 步驟 5: 驗證關鍵依賴
 python3 -c "
@@ -190,7 +188,7 @@ source .venv/bin/activate
 python3 -c "import aiortc; assert aiortc.__version__ == '1.9.0'"
 
 # 如果版本錯誤，執行修復
-pip install -r requirements.txt --force-reinstall
+uv pip install -r requirements.txt --force-reinstall
 
 # 編譯項目
 colcon build --symlink-install
@@ -203,7 +201,7 @@ colcon build --symlink-install
 pip freeze | grep -E "aiortc|numpy|scipy|torch"
 
 # 步驟 2: 重新安裝所有依賴
-pip install -r requirements.txt --force-reinstall --no-cache-dir
+uv pip install -r requirements.txt --force-reinstall --no-cache-dir
 
 # 步驟 3: 清理 ROS2 構建
 rm -rf build/ install/ log/
@@ -286,7 +284,7 @@ DeprecationWarning: numpy.ufunc(...) is deprecated
 **原因**: numpy/scipy 版本不相容
 **解決**:
 ```bash
-pip install numpy==1.26.4 scipy==1.8.0 --force-reinstall
+uv pip install numpy==1.26.4 scipy --force-reinstall
 ```
 
 ### 症狀 3: WebRTC SCTP 握手失敗
@@ -310,10 +308,10 @@ bash start_go2_simple.sh  # 驗證
 
 | 套件 | 推薦版本 | 最小版本 | 最大版本 | 備註 |
 |------|---------|---------|---------|------|
-| aiortc | 1.9.0 | 1.9.0 | 1.9.0 | ⚠️ 嚴格版本！ |
+| aiortc | 1.9.0 | 1.9.0 | 1.9.0 | ⚠️ 目前專案鎖定版本（如需升級請先實測） |
 | aioice | 0.10.1 | 0.9.0 | <1.0.0 | aiortc 依賴 |
-| numpy | 1.26.4 | 1.24.0 | 1.26.4 | scipy 相容性 |
-| scipy | 1.8.0 | 1.8.0 | 1.8.0 | numpy 1.26 不支援新版 |
+| numpy | 1.26.4 | 1.24.0 | 1.26.4 | 目前 requirements.txt 指定版本 |
+| scipy | - | - | - | 視實際需求與官方相容性建議選用 |
 | torch | latest | 2.0.0 | - | CUDA 版本需選擇 |
 | opencv-python | latest | 4.5.0 | - | 影像處理 |
 

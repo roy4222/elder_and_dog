@@ -9,10 +9,12 @@
 
 ## 📋 概述
 
-本指南針對 Go2 機器狗 WebRTC 連接問題進行系統化的除錯流程。大多數 WebRTC 故障源自 **aiortc 版本不匹配** 而非硬體或固件問題。
+本指南針對 Go2 機器狗 WebRTC 連接問題提供系統化的除錯流程，包含**目前已觀察到的常見風險組合**，但不宣稱所有問題都有單一根本原因。
 
-**核心發現** (2025/11/18)：
-WebRTC 連接失敗的根本原因是 `aiortc 1.14.0 + STUN 配置` 導致 SCTP 握手超時。降級至 `aiortc 1.9.0` 並移除 STUN 配置可完全解決問題。
+**重要說明 (2025/11/18)**：
+- 在某次實驗中，確實觀察到「`aiortc 1.14.0 + STUN 配置`」會導致 SCTP 握手長時間 timeout，降級為 `aiortc 1.9.0` 並移除 STUN 後，當次問題獲得解決。  
+- 不過，後續也觀察到其他失敗型態（例如：`/con_notify` HTTP timeout、WSL2 下偶發網路問題、機器端模式 / App 佔線等），**因此目前立場是「aiortc 版本不匹配是高風險因素之一」，而不是唯一的 root cause**。
+- 若你遇到的是 HTTP 連線 timeout、ICE 無法完成等情況，請參考本文後半段針對網路 / 機器狀態的檢查步驟。
 
 ---
 
@@ -20,16 +22,16 @@ WebRTC 連接失敗的根本原因是 `aiortc 1.14.0 + STUN 配置` 導致 SCTP 
 
 如果你遇到 WebRTC 問題，按以下順序執行：
 
-### 步驟 1：檢查 aiortc 版本（必做）
+### 步驟 1：檢查 aiortc 版本（建議先做）
 ```bash
 python3 -c "import aiortc; print(f'aiortc version: {aiortc.__version__}')"
 ```
 
 **預期結果**：`aiortc version: 1.9.0`
 
-**如果版本是 1.14.0 或更新**：立即執行修復
+**如果版本是 1.14.0 或更新**：建議先回到目前專案穩定使用的 1.9.0 測一次
 ```bash
-pip install aiortc==1.9.0 --force-reinstall
+uv pip install aiortc==1.9.0 --force-reinstall
 ```
 
 ### 步驟 2：驗證連接是否恢復
@@ -37,15 +39,16 @@ pip install aiortc==1.9.0 --force-reinstall
 # 停止任何正在運行的驅動
 pkill -f go2_driver_node
 
-# 重新啟動驅動（應顯示 "Robot validation successful"）
+# 重新啟動驅動（觀察是否能穩定建立連線與收到狀態資料）
 bash start_go2_simple.sh
 ```
 
-**預期輸出**：
-```
-INFO:go2_robot_sdk.presentation.go2_driver_node:🤖 Robot validation successful
-INFO:go2_robot_sdk.infrastructure.webrtc.go2_connection:✅ SCTP 握手成功！Data channel 在 0.5 秒後開啟
-```
+**實務建議**：  
+- 目前驅動程式的 log 文案會隨版本演進，**不一定**會出現「Robot validation successful」或「SCTP 握手成功！」這類字眼。  
+- 比較可靠的判斷方式是：  
+  - ICE / connection state 有進到 `completed` / `connected`；  
+  - data channel 狀態為 `open`；  
+  - 日誌中持續出現 `rt/lf/lowstate`、`rt/utlidar/robot_pose` 等訊息（代表資料有穩定流動）。
 
 ### 步驟 3：測試機器人控制
 ```bash
@@ -56,8 +59,10 @@ ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq "{topic: 'rt/api/
 # 觀察日誌中的 sportmodestate 或使用 RViz 查看機器人姿態
 ```
 
-**若以上步驟解決問題，恭喜！** 👏
-請閱讀 [dependency_management.md](./dependency_management.md) 的「最佳實踐」部分，防止未來再發生版本衝突。
+**若以上步驟解決問題，恭喜！** 👏  
+請閱讀 [dependency_management.md](./dependency_management.md) 的「最佳實踐」部分，避免未來因套件升級再次踩到類似問題。  
+
+**若問題仍存在**（尤其是 HTTP timeout / 無法連到 `/con_notify`），請往下看「HTTP /con_notify 相關問題」與「WSL2 特定問題排查」。
 
 ---
 
@@ -100,7 +105,8 @@ WARNING:go2_robot_sdk.infrastructure.webrtc.go2_connection:❌ SCTP 握手超時
 
 **含義**：aiortc 嘗試 9 次發送 SCTP 初始化包，但機器人端未回應
 
-**根本原因**：aiortc 1.14.0 + STUN 配置在 SCTP 層有相容性問題
+**可能原因之一（案例）**：曾觀察到在「aiortc 1.14.0 + STUN 配置」的組合下，SCTP 層有相容性問題，導致握手一直重試。  
+實務上還需要同時檢查：WSL2 網路、機器當下模式、是否有 App 佔線等因素。
 
 **解決方案**：
 1. 檢查版本並降級：`pip install aiortc==1.9.0 --force-reinstall`
@@ -244,7 +250,7 @@ bash start_go2_simple.sh
 
 ### 情況 B：更新 requirements.txt 後出現新的 WebRTC 問題
 
-**根本原因**：pip 依賴解析時自動升級了 aiortc
+**常見原因之一**：pip/uv 在解析依賴時，從其他套件的依賴鏈把 aiortc 升級到了新版，而 requirements.txt 沒有鎖死。
 
 **症狀**：
 ```
@@ -255,15 +261,15 @@ pip install -r requirements.txt
 **解決方案**：
 ```bash
 # 方案 1：重新安裝並明確指定版本
-pip install -r requirements.txt --force-reinstall
-pip install aiortc==1.9.0 --force-reinstall
+uv pip install -r requirements.txt --force-reinstall
+uv pip install aiortc==1.9.0 --force-reinstall
 
 # 方案 2：更新 requirements.txt，添加明確的版本註解
 # 編輯 requirements.txt，確保有：
 #   aiortc==1.9.0  # ⚠️ 必須精確到 1.9.0，不可用 >= 或 ~=
 
 # 方案 3：使用 pip-compile 生成 lock 檔（進階）
-pip install pip-compile-multi
+uv pip install pip-compile-multi
 pip-compile-multi --generate-hashes
 ```
 
@@ -271,7 +277,43 @@ pip-compile-multi --generate-hashes
 
 ---
 
-### 情況 C：WSL2 特定問題排查
+### 情況 C：HTTP /con_notify 相關問題（目前最新觀察）
+
+在某些情況下，可以看到 ICE / SDP/ DTLS 看起來都正常，但在**步驟 2 取得機器人公鑰**時就卡住，例如：
+
+```text
+go2_robot_sdk.infrastructure.webrtc.http_client - DEBUG - Making POST request to http://192.168.12.1:9991/con_notify
+...
+ERROR - Connection error when requesting http://192.168.12.1:9991/con_notify: ...
+ConnectTimeoutError(..., 'Connection to 192.168.12.1 timed out. (connect timeout=10.0)')
+```
+
+這種情況多半與**機器端 / 網路狀態**有關，而非 aiortc 版本本身：
+
+**建議檢查步驟（請在與驅動相同機器上執行）**：
+
+```bash
+# 1. 確認基本連通性
+ping -c 4 192.168.12.1
+
+# 2. 直接測試 HTTP 服務是否有回應（5 秒 timeout）
+curl -v http://192.168.12.1:9991/con_notify --max-time 5
+```
+
+- 若 `ping` OK 但 `curl` 一直 timeout：  
+  - 可能是 Go2 沒有開啟 WebRTC 控制模式、手機 App 佔線、或機器端 HTTP 服務沒有啟動。  
+  - 建議：  
+    - 確認手機 App 已關閉 / 退出控制模式；  
+    - 確認 Go2 處於允許 PC WebRTC 控制的模式；  
+    - 重新開關機器人或從官方 App 重新進入對應模式後再試一次。  
+- 若 `ping` 也失敗：  
+  - 優先檢查網段設定、網路線 / WiFi 連線，以及 WSL2 虛擬網卡設定。  
+
+當 `/con_notify` 都無法透過 `curl` 成功，Python 驅動自然也會在同一步驟 timeout，這時應先定位為**網路 / 機器狀態**問題，而不是第一時間再去調 aiortc 或 STUN。
+
+---
+
+### 情況 D：WSL2 特定問題排查
 
 如果在 WSL2 上仍有 SCTP 握手失敗，可能涉及 WSL2 的 SCTP 核心支援限制：
 
@@ -294,7 +336,8 @@ sudo modprobe sctp
 wsl --update
 ```
 
-**替代方案**：在原生 Linux（非 WSL2）環境上測試，以排除 WSL2 特定問題。
+**替代方案**：在原生 Linux（非 WSL2）環境上測試，以排除 WSL2 特定問題。  
+建議：若在 WSL2 下偶發連線問題（例如有時成功、有時 `/con_notify` timeout），可以在一台乾淨的 Ubuntu 機器上重複相同步驟，比較 log，協助判斷問題層級。
 
 ---
 
@@ -364,7 +407,7 @@ Ice gathering state: complete
 
 ### 1. 定期驗證版本
 
-每次啟動開發環境前執行：
+每次啟動開發環境前執行（選擇性，但推薦）：
 ```bash
 python3 -c "import aiortc; assert aiortc.__version__ == '1.9.0', f'aiortc 版本異常：{aiortc.__version__}'"
 ```
@@ -392,7 +435,7 @@ aiortc~=1.9
 
 每次重新安裝依賴時加上 `--force-reinstall` 旗標：
 ```bash
-pip install -r requirements.txt --force-reinstall --no-cache-dir
+uv pip install -r requirements.txt --force-reinstall --no-cache-dir
 ```
 
 ### 4. 定期更新 dev_notes
@@ -421,11 +464,10 @@ pip install -r requirements.txt --force-reinstall --no-cache-dir
 
    # 導出版本訊息
    python3 << 'EOF'
-   import aiortc, aioice, numpy, scipy
+   import aiortc, aioice, numpy
    print(f"aiortc: {aiortc.__version__}")
    print(f"aioice: {aioice.__version__}")
    print(f"numpy: {numpy.__version__}")
-   print(f"scipy: {scipy.__version__}")
    import platform
    print(f"Python: {platform.python_version()}")
    print(f"System: {platform.system()}")
