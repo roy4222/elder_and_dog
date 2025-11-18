@@ -98,6 +98,17 @@ cmd_balance() {
   fi
 }
 
+cmd_lie() {
+  echo -e "${CYAN}→ 執行：臥倒${NC}"
+  if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
+    "{topic: 'rt/api/sport/request', api_id: 1008}" 2>/dev/null; then
+    echo -e "${GREEN}✓ 指令已發送${NC}"
+  else
+    echo -e "${RED}✗ 發送失敗${NC}"
+    return 1
+  fi
+}
+
 cmd_forward() {
   echo -e "${CYAN}→ 執行：前進 3 秒（速度 0.3 m/s）${NC}"
   (ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
@@ -297,7 +308,8 @@ Go2 機器人測試腳本 - P0 核心版
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 基本動作控制：
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  sit                  坐下
+  sit                  坐下（下半身坐下）
+  lie                  臥倒（完全躺平）
   stand                站起
   balance              平衡站立
 
@@ -358,6 +370,7 @@ main() {
     sit)      cmd_sit ;;
     stand)    cmd_stand ;;
     balance)  cmd_balance ;;
+    lie)      cmd_lie ;;
 
     # 移動控制
     forward)  cmd_forward ;;
