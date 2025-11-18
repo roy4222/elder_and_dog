@@ -98,10 +98,76 @@ cmd_balance() {
   fi
 }
 
-cmd_lie() {
-  echo -e "${CYAN}→ 執行：臥倒（打滾）${NC}"
+cmd_wallow() {
+  echo -e "${CYAN}→ 執行：打滾（Wallow）${NC}"
   if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
     "{topic: 'rt/api/sport/request', api_id: 1021}" 2>/dev/null; then
+    echo -e "${GREEN}✓ 指令已發送${NC}"
+  else
+    echo -e "${RED}✗ 發送失敗${NC}"
+    return 1
+  fi
+}
+
+cmd_hello() {
+  echo -e "${CYAN}→ 執行：打招呼${NC}"
+  if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
+    "{topic: 'rt/api/sport/request', api_id: 1016}" 2>/dev/null; then
+    echo -e "${GREEN}✓ 指令已發送${NC}"
+  else
+    echo -e "${RED}✗ 發送失敗${NC}"
+    return 1
+  fi
+}
+
+cmd_stretch() {
+  echo -e "${CYAN}→ 執行：伸展${NC}"
+  if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
+    "{topic: 'rt/api/sport/request', api_id: 1017}" 2>/dev/null; then
+    echo -e "${GREEN}✓ 指令已發送${NC}"
+  else
+    echo -e "${RED}✗ 發送失敗${NC}"
+    return 1
+  fi
+}
+
+cmd_dance1() {
+  echo -e "${CYAN}→ 執行：舞蹈 1${NC}"
+  if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
+    "{topic: 'rt/api/sport/request', api_id: 1022}" 2>/dev/null; then
+    echo -e "${GREEN}✓ 指令已發送${NC}"
+  else
+    echo -e "${RED}✗ 發送失敗${NC}"
+    return 1
+  fi
+}
+
+cmd_dance2() {
+  echo -e "${CYAN}→ 執行：舞蹈 2${NC}"
+  if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
+    "{topic: 'rt/api/sport/request', api_id: 1023}" 2>/dev/null; then
+    echo -e "${GREEN}✓ 指令已發送${NC}"
+  else
+    echo -e "${RED}✗ 發送失敗${NC}"
+    return 1
+  fi
+}
+
+cmd_frontflip() {
+  echo -e "${CYAN}→ 執行：前翻${NC}"
+  if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
+    "{topic: 'rt/api/sport/request', api_id: 1030}" 2>/dev/null; then
+    echo -e "${GREEN}✓ 指令已發送${NC}"
+  else
+    echo -e "${RED}✗ 發送失敗${NC}"
+    return 1
+  fi
+}
+
+cmd_frontjump() {
+  echo -e "${CYAN}→ 執行：前跳${NC}"
+  if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
+    "{topic: 'rt/api/sport/request', api_id: 1031}" 2>/dev/null; then
     echo -e "${GREEN}✓ 指令已發送${NC}"
   else
     echo -e "${RED}✗ 發送失敗${NC}"
@@ -309,9 +375,18 @@ Go2 機器人測試腳本 - P0 核心版
 基本動作控制：
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   sit                  坐下（下半身坐下）
-  lie                  臥倒（打滾動作）
   stand                站起
   balance              平衡站立
+
+娛樂動作：
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  wallow               打滾
+  hello                打招呼
+  stretch              伸展
+  dance1               舞蹈 1
+  dance2               舞蹈 2
+  flip                 前翻
+  jump                 前跳
 
 移動控制：
   forward              向前 3 秒（0.3 m/s）
@@ -370,7 +445,13 @@ main() {
     sit)      cmd_sit ;;
     stand)    cmd_stand ;;
     balance)  cmd_balance ;;
-    lie)      cmd_lie ;;
+    wallow)   cmd_wallow ;;
+    hello)    cmd_hello ;;
+    stretch)  cmd_stretch ;;
+    dance1)   cmd_dance1 ;;
+    dance2)   cmd_dance2 ;;
+    flip)     cmd_frontflip ;;
+    jump)     cmd_frontjump ;;
 
     # 移動控制
     forward)  cmd_forward ;;
