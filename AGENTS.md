@@ -1,6 +1,8 @@
 # Repository Guidelines
 一律用繁體中文回答
 
+pip install 一律改成用 uv pip install
+
 ## Project Structure & Module Organization
 - Core ROS 2 Python SDK lives in `go2_robot_sdk/go2_robot_sdk` (application, domain, infrastructure, presentation layers).
 - ROS 2 interfaces are in `go2_interfaces/msg` (message definitions used across packages).

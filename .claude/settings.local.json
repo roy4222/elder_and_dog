@@ -5,7 +5,15 @@
       "Bash(git submodule update:*)",
       "Bash(uv --version:*)",
       "Bash(uv pip install:*)",
-      "Bash(uv venv:*)"
+      "Bash(uv venv:*)",
+      "Bash(test:*)",
+      "Bash(git submodule:*)",
+      "Bash(python3:*)",
+      "Bash(dpkg:*)",
+      "Bash(rosdep:*)",
+      "Bash(ping:*)",
+      "Bash(/dev/null)",
+      "Bash(ip addr:*)"
     ],
     "deny": [],
     "ask": []

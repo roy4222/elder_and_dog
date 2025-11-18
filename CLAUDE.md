@@ -1,6 +1,6 @@
 # CLAUDE.md
 一律用繁體中文回答
-
+pip install 一律改成用 uv pip install
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
