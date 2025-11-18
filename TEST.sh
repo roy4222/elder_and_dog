@@ -99,9 +99,9 @@ cmd_balance() {
 }
 
 cmd_lie() {
-  echo -e "${CYAN}→ 執行：臥倒${NC}"
+  echo -e "${CYAN}→ 執行：臥倒（打滾）${NC}"
   if ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
-    "{topic: 'rt/api/sport/request', api_id: 1008}" 2>/dev/null; then
+    "{topic: 'rt/api/sport/request', api_id: 1021}" 2>/dev/null; then
     echo -e "${GREEN}✓ 指令已發送${NC}"
   else
     echo -e "${RED}✗ 發送失敗${NC}"
@@ -309,7 +309,7 @@ Go2 機器人測試腳本 - P0 核心版
 基本動作控制：
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   sit                  坐下（下半身坐下）
-  lie                  臥倒（完全躺平）
+  lie                  臥倒（打滾動作）
   stand                站起
   balance              平衡站立
 
