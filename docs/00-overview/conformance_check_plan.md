@@ -1,10 +1,10 @@
 # Go2 智慧尋物系統計畫符合度檢查與修正規劃
 
 **報告日期：** 2025/11/16  
-**分析基礎：** Goal.md（目標計畫） vs claude_plan.md（現況報告） vs go2_omniverse/README.md（模擬器專案）
+**分析基礎：** [Goal.md](./Goal.md)（目標計畫） vs [claude_plan.md](./claude_plan.md)（現況報告） vs go2_omniverse/README.md（模擬器專案）
 
 ## 1. 計畫符合度評估
-| 項目 | Goal.md 目標 | claude_plan.md 現況 | 符合度 | 備註 |
+| 項目 | [Goal.md](./Goal.md) 目標 | [claude_plan.md](./claude_plan.md) 現況 | 符合度 | 備註 |
 |------|--------------|---------------------|--------|------|
 | **基礎建設 (ROS2 + SDK)** | Ubuntu 22.04 + ROS2 Humble + Clean Arch. | 95% (程式齊備，多機/WebRTC/CycloneDDS) | ✅ 高 | 僅缺本機 ROS2 安裝 & pip 網路修復 |
 | **SLAM + Nav2** | slam_toolbox + Nav2 | 100% (launch 整合，參數優化) | ✅ 完備 | 可即時使用，LiDAR 7Hz |
@@ -16,7 +16,7 @@
 | **Web UI** | 自訂前端 (影像/地圖/結果) | 30% (Foxglove Bridge) | ⚠️ 中 | 可擴 Foxglove 或新 React UI |
 | **總體** | 4個月時程 | **約55%** | 🟡 中等 | 基礎強，核心 (VLM/轉換/FSM/模擬) 待補 |
 
-**結論：** 現況高度符合 Goal.md 基礎與導航部分，模擬器由 go2_omniverse 解決（非零開發），關鍵缺口為 VLM/轉換/FSM（W6-W9）。風險低，利用現有加速。
+**結論：** 現況高度符合 [Goal.md](./Goal.md) 基礎與導航部分，模擬器由 go2_omniverse 解決（非零開發），關鍵缺口為 VLM/轉換/FSM（W6-W9）。風險低，利用現有加速。
 
 ## 2. 修正後系統架構圖 (整合 go2_omniverse)
 
@@ -93,7 +93,7 @@ graph TD
 | GPU 伺服器 | ✅ **Quadro RTX 8000 48GB（遠端 SSH）** | ✅ 已確認 | ROY 完成驗證 |
 | Gemini API | 開發額度 10K/月 | Waiting List | 立即申請/追蹤（備案：本地 LLaVA） |
 | 網路/DNS | pip apt 正常 (WSL proxy) | ❌ 待修復 | 設 proxy/http_proxy 或 Docker |
-| Isaac Sim | 2023.1.1 + Orbit 0.3.0 | ❌ 待部署至遠端伺服器 | W7-W8 安裝（詳見 docs/remote_gpu_setup.md） |
+| Isaac Sim | 2023.1.1 + Orbit 0.3.0 | ❌ 待部署至遠端伺服器 | W7-W8 安裝（詳見 ../01-guides/remote_gpu_setup.md） |
 
 ## 6. 風險管理 (Plan A/B/C)
 | 風險 | 等級 | 緩解 | Plan B (Demo) | Plan C (最低) |

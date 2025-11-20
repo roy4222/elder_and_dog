@@ -56,7 +56,7 @@ Host gpu-server
 # 直接在遠端開發，零延遲
 ```
 
-**📖 詳細文件：** [docs/remote_gpu_setup.md](docs/remote_gpu_setup.md)
+**📖 詳細文件：** [../01-guides/remote_gpu_setup.md](../01-guides/remote_gpu_setup.md)
 
 ---
 
@@ -75,7 +75,7 @@ conda config --set auto_activate_base false
 
 # 3. 安裝 Isaac Sim 2023.1.1
 # 使用 Omniverse Launcher 或 Docker
-# 詳見：docs/isaac_sim_integration.md
+# 詳見：../02-design/isaac_sim_integration.md
 
 # 4. 安裝 IsaacLab (Orbit 0.3.0)
 cd ~/workspace
@@ -109,7 +109,7 @@ cp Isaac_sim/Unitree/Unitree_L1.json \
 xvfb-run -a ./run_sim.sh --headless
 ```
 
-**📖 詳細文件：** [docs/isaac_sim_integration.md](docs/isaac_sim_integration.md)
+**📖 詳細文件：** [../02-design/isaac_sim_integration.md](../02-design/isaac_sim_integration.md)
 
 ---
 
@@ -122,7 +122,7 @@ git clone <your-repo-url> fju-go2-sdk
 cd fju-go2-sdk
 
 # 2. 安裝 ROS2 Humble（若未安裝）
-# 參考：docs/quickstart_w6_w9.md Day 1-2
+# 參考：../01-guides/quickstart_w6_w9.md Day 1-2
 
 # 3. 編譯專案
 rosdep install --from-paths src --ignore-src -r -y
@@ -192,7 +192,7 @@ pip install llava
 # 您的 48GB VRAM 可輕鬆運行
 ```
 
-**📖 詳細文件：** [docs/remote_gpu_setup.md](docs/remote_gpu_setup.md) § 效能優化
+**📖 詳細文件：** [../01-guides/remote_gpu_setup.md](../01-guides/remote_gpu_setup.md) § 效能優化
 
 ---
 
@@ -252,23 +252,23 @@ nvidia-smi dmon -s u
 export CUDA_VISIBLE_DEVICES=0
 ```
 
-**📖 完整故障排除：** [docs/remote_gpu_setup.md](docs/remote_gpu_setup.md) § 常見問題
+**📖 完整故障排除：** [../01-guides/remote_gpu_setup.md](../01-guides/remote_gpu_setup.md) § 常見問題
 
 ---
 
 ## 📚 完整文件索引
 
 ### 必讀文件（W6 開始前）
-1. **[docs/README.md](docs/README.md)** - 文件總覽
-2. **[docs/quickstart_w6_w9.md](docs/quickstart_w6_w9.md)** - 每日任務 Checklist
-3. **[docs/remote_gpu_setup.md](docs/remote_gpu_setup.md)** - 遠端 GPU 完整配置
+1. **[../README.md](../README.md)** - 文件總覽
+2. **[../01-guides/quickstart_w6_w9.md](../01-guides/quickstart_w6_w9.md)** - 每日任務 Checklist
+3. **[../01-guides/remote_gpu_setup.md](../01-guides/remote_gpu_setup.md)** - 遠端 GPU 完整配置
 
 ### 技術開發（W6-W9）
-4. **[docs/gemini_vlm_development.md](docs/gemini_vlm_development.md)** - VLM 整合
-5. **[docs/coordinate_transformation.md](docs/coordinate_transformation.md)** - 座標轉換
-6. **[docs/search_fsm_design.md](docs/search_fsm_design.md)** - 尋物狀態機
-7. **[docs/isaac_sim_integration.md](docs/isaac_sim_integration.md)** - Isaac Sim 整合
-8. **[docs/testing_plan.md](docs/testing_plan.md)** - W9 測試計畫
+4. **[../02-design/gemini_vlm_backup.md](../02-design/gemini_vlm_backup.md)** - VLM 備案
+5. **[../02-design/coordinate_transformation.md](../02-design/coordinate_transformation.md)** - 座標轉換
+6. **[../02-design/search_fsm_design.md](../02-design/search_fsm_design.md)** - 尋物狀態機
+7. **[../02-design/isaac_sim_integration.md](../02-design/isaac_sim_integration.md)** - Isaac Sim 整合
+8. **[../03-testing/testing_plan.md](../03-testing/testing_plan.md)** - W9 測試計畫
 
 ---
 

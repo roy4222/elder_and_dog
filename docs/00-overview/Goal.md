@@ -130,7 +130,7 @@ graph TD
 
 | 項目 | 狀態 | 修正建議 | 負責人 | 期限 |
 | :--- | :--- | :--- | :--- | :--- |
-| **GPU 伺服器** | ✅ **Quadro RTX 8000 48GB** | **遠超需求！** 支援 RTX 光線追蹤、多機器人、VLM 本地推論。遠端 SSH 連線（參考 `docs/remote_gpu_setup.md`） | ROY | ✅ 已確認 |
+| **GPU 伺服器** | ✅ **Quadro RTX 8000 48GB** | **遠超需求！** 支援 RTX 光線追蹤、多機器人、VLM 本地推論。遠端 SSH 連線（參考 `../01-guides/remote_gpu_setup.md`） | ROY | ✅ 已確認 |
 | **Gemini VLM API** | Waiting List | 立即追蹤狀態，申請開發額度 (目標 10K 次/月)。**備案：** 48GB VRAM 可運行本地 VLM（LLaVA）。 | (指定成員) | W1 |
 | **第三人稱視角** | **已廢棄/降級** | 專注於 Go2 內建感測器 (LiDAR/Camera) 的第一人稱方案。 | (所有成員) | W1 |
 | **必讀文檔** | ✅ **已提供** | **8 份完整開發文件**（`docs/` 目錄），涵蓋 VLM/座標轉換/FSM/Isaac Sim/測試。 | (所有成員) | W6 開始前 |

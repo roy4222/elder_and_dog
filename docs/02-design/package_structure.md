@@ -2,59 +2,83 @@
 
 **文件目的：** 提供 W6-W9 新增套件的標準化結構與依賴管理指南
 **適用套件：** `vision_vlm`, `coordinate_transformer`, `search_logic`
+**版本：** v1.1（根據 2025/11/19 會議決議更新）
 
 ---
 
 ## 📦 套件總覽
 
-### 1. vision_vlm（VLM 視覺識別）
+### 1. vision_vlm（VLM 視覺識別 - COCO Plan A + Gemini Plan B）
+
+#### 目錄結構
 
 ```
 src/vision_vlm/
 ├── vision_vlm/
 │   ├── __init__.py
-│   ├── gemini_vlm_node.py          # 主節點
-│   ├── gemini_api_client.py        # API 客戶端
-│   ├── detection_converter.py      # Detection2DArray 轉換
-│   ├── image_preprocessor.py       # 影像前處理
-│   └── cache_manager.py            # 快取管理
+│   # === Plan A: COCO 本地推論（主力） ===
+│   ├── coco_detector_node.py       # COCO 主節點
+│   ├── coco_classes.py             # COCO 80 類別映射（繁體中文）
+│   ├── model_loader.py             # PyTorch 模型載入器
+│   # === Plan B: Gemini API（備案） ===
+│   ├── gemini_vlm_node.py          # Gemini 備案節點
+│   ├── gemini_api_client.py        # Gemini API 客戶端
+│   # === 共用模組 ===
+│   ├── detection_converter.py      # Detection2DArray 轉換（通用）
+│   ├── image_preprocessor.py       # 影像前處理（通用）
+│   └── cache_manager.py            # 快取管理（選用）
 ├── config/
-│   └── vlm_params.yaml
+│   ├── coco_params.yaml            # COCO 參數配置
+│   └── gemini_params.yaml          # Gemini 參數配置
 ├── test/
 │   ├── __init__.py
-│   ├── test_api_client.py
-│   └── test_detection_converter.py
+│   ├── test_coco_detector.py       # COCO 測試
+│   ├── test_gemini_api.py          # Gemini 測試
+│   └── test_detection_converter.py # 轉換器測試
 ├── launch/
-│   └── vlm_standalone.launch.py
+│   ├── coco_detector.launch.py     # COCO 啟動檔（主力）
+│   └── gemini_vlm.launch.py        # Gemini 啟動檔（備案）
 ├── resource/
 │   └── vision_vlm                  # ament 資源標記
 ├── package.xml
 ├── setup.py
 ├── setup.cfg
+├── requirements-coco.txt           # PyTorch 依賴（COCO 專用）
 └── README.md
 ```
 
-**package.xml**：
+#### package.xml（支援 COCO + Gemini 雙方案）
+
 ```xml
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>vision_vlm</name>
-  <version>1.0.0</version>
-  <description>Gemini VLM integration for object detection</description>
+  <version>1.1.0</version>
+  <description>VLM integration for object detection (COCO Plan A + Gemini Plan B)</description>
   <maintainer email="team@fju.edu.tw">FJU Go2 Team</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_python</buildtool_depend>
 
+  <!-- ROS2 依賴 -->
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
   <depend>vision_msgs</depend>
   <depend>std_msgs</depend>
   <depend>cv_bridge</depend>
 
+  <!-- Python 系統依賴 -->
   <exec_depend>python3-pil</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+
+  <!-- PyTorch 相關（COCO 需要，透過 pip/uv 安裝，此處僅註記） -->
+  <!-- torch==2.1.0+cu118 (via requirements-coco.txt) -->
+  <!-- torchvision==0.16.0+cu118 (via requirements-coco.txt) -->
+
+  <!-- Gemini API（備案，選用時透過 pip/uv 安裝） -->
+  <!-- google-generativeai==0.3.2 (optional, via pip) -->
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
@@ -67,7 +91,8 @@ src/vision_vlm/
 </package>
 ```
 
-**setup.py**：
+#### setup.py（支援雙節點 entry points）
+
 ```python
 from setuptools import setup, find_packages
 import os
@@ -77,7 +102,7 @@ package_name = 'vision_vlm'
 
 setup(
     name=package_name,
-    version='1.0.0',
+    version='1.1.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -88,23 +113,33 @@ setup(
     ],
     install_requires=[
         'setuptools',
-        'google-generativeai',  # Gemini API
         'pillow',
         'numpy',
+        'opencv-python',
+        # 注意：torch/torchvision 需透過 requirements-coco.txt 安裝
+        # 注意：google-generativeai 僅備案時需要
     ],
     zip_safe=True,
     maintainer='FJU Go2 Team',
     maintainer_email='team@fju.edu.tw',
-    description='Gemini VLM integration',
+    description='VLM integration (COCO Plan A + Gemini Plan B)',
     license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            # Plan A: COCO 主力節點
+            'coco_detector_node = vision_vlm.coco_detector_node:main',
+            # Plan B: Gemini 備案節點
             'gemini_vlm_node = vision_vlm.gemini_vlm_node:main',
         ],
     },
 )
 ```
+
+**重要提醒**：
+- PyTorch 依賴必須透過 `uv pip install -r requirements-coco.txt` 單獨安裝
+- 不要在 `install_requires` 中加入 `torch/torchvision`（會與 CUDA 版本衝突）
+- Gemini API 僅在需要 Plan B 時才安裝：`uv pip install google-generativeai==0.3.2`
 
 **setup.cfg**：
 ```ini

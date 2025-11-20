@@ -113,7 +113,7 @@
   - 從「RTX 4080 + 32GB RAM + 100GB SSD」（確認中）
   - 改為 ✅ **Quadro RTX 8000 48GB（遠端 SSH）**（已確認）
 - **行 96**：Isaac Sim 狀態更新
-  - 新增說明：「待部署至遠端伺服器（詳見 docs/remote_gpu_setup.md）」
+  - 新增說明：「待部署至遠端伺服器（詳見 docs/01-guides/remote_gpu_setup.md）」
 - **行 94**：Gemini API 備案說明
   - 新增備註：「（備案：本地 LLaVA）」
   - 原因：48GB VRAM 足以運行本地 VLM

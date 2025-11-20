@@ -1,9 +1,73 @@
 # 遠端 GPU 伺服器配置指南（Quadro RTX 8000）
 
 **GPU 規格：** NVIDIA Quadro RTX 8000 48GB
-**連線方式：** SSH 遠端連線
+**連線方式：** SSH 遠端連線（經 Windows VM 中繼）
 **作業系統：** Ubuntu 22.04（假設）
 **優勢：** 🚀 性能遠超 Isaac Sim 需求，可啟用所有高級功能
+**版本：** v1.1（根據 2025/11/19 會議決議更新）
+
+---
+
+## 🏗️ 開發環境架構（根據 2025/11/19 會議決議）
+
+### 架構圖
+
+```mermaid
+graph TD
+    A[本地 Mac<br/>VSCode/Terminal] -->|SSH| B[Windows VM<br/>Ubuntu 22.04]
+    B -->|GPU 直通/映射| C[Quadro RTX 8000<br/>48GB VRAM]
+    C -->|CUDA 運算| D[Isaac Sim<br/>Isaac Lab/Orbit]
+    C -->|CUDA 運算| E[PyTorch<br/>COCO VLM 推論]
+
+    B -->|ROS2 Topics| F[go2_robot_sdk]
+    F -->|WebRTC/WiFi| G[Go2 機器狗<br/>實機]
+
+    style B fill:#4CAF50,stroke:#2E7D32,color:#fff
+    style C fill:#FF9800,stroke:#E65100,color:#fff
+    style A fill:#2196F3,stroke:#1565C0,color:#fff
+```
+
+### 架構說明
+
+根據 **2025/11/19 會議決議**，開發環境採用「Mac → Windows VM → GPU」三層架構：
+
+#### 第 1 層：本地開發機（Mac）
+- **用途**：程式碼編輯、版本控制、文檔撰寫
+- **軟體**：VSCode Remote SSH、Git、Terminal
+- **連線**：透過 SSH 連接到 Windows VM
+
+#### 第 2 層：Windows VM（Ubuntu）
+- **用途**：ROS2 開發環境、中繼橋接層
+- **作業系統**：Windows Host + Ubuntu VM（Hyper-V/VMware）
+- **優勢**：
+  - ✅ 全組成員可遠端存取（無需直接連 GPU 伺服器）
+  - ✅ 系統崩潰時可快速重建（快照功能）
+  - ✅ 隔離開發環境，避免污染主機
+- **軟體**：ROS2 Humble、Python 3.10、colcon
+
+#### 第 3 層：GPU 伺服器（Quadro RTX 8000）
+- **用途**：高效能運算（Isaac Sim、COCO VLM 推論）
+- **連接方式**：Windows VM 透過 GPU 直通或 PCI Passthrough
+- **軟體**：CUDA 11.8+、PyTorch、Isaac Sim
+
+### 連線流程
+
+```bash
+# 步驟 1：本地 Mac SSH 到 Windows VM
+ssh developer@windows-vm-ip
+
+# 步驟 2：在 VM 內驗證 GPU 可用
+nvidia-smi
+
+# 步驟 3：啟動 ROS2 開發環境
+source /opt/ros/humble/setup.bash
+cd ~/ros2_ws
+source .venv/bin/activate
+source install/setup.bash
+
+# 步驟 4：執行 COCO VLM 或 Isaac Sim（自動使用 GPU）
+ros2 launch vision_vlm coco_detector.launch.py
+```
 
 ---
 
@@ -27,9 +91,143 @@
 
 ---
 
-## 🔧 遠端 SSH 配置
+## 💻 Windows VM 配置（關鍵中繼層）
 
-### 前置檢查
+### 為什麼需要 Windows VM？
+
+根據 **2025/11/19 會議決議**，Windows VM 作為中繼層有以下優勢：
+- ✅ **全組成員可遠端存取**：無需每人都配置 GPU 伺服器權限
+- ✅ **系統隔離**：避免開發環境污染主機
+- ✅ **快照與還原**：系統崩潰時可快速重建（< 5 分鐘）
+- ✅ **Mac 相容性**：解決 Mac 無法直接運行 Isaac Sim 的問題
+
+### 方案 A：Hyper-V（Windows 10/11 Pro 內建）
+
+#### 啟用 Hyper-V
+```powershell
+# 在 Windows PowerShell（管理員）執行
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+
+# 重新啟動電腦
+Restart-Computer
+```
+
+#### 建立 Ubuntu VM
+1. 開啟 Hyper-V 管理員
+2. 新增虛擬機器：
+   - 名稱：`go2-dev-vm`
+   - 記憶體：16GB（建議）
+   - 虛擬硬碟：100GB
+   - ISO 映像：Ubuntu 22.04 LTS Desktop
+
+#### GPU Passthrough（關鍵步驟）
+
+**方法 1：DDA (Discrete Device Assignment)**
+```powershell
+# 在 Windows PowerShell（管理員）執行
+# 1. 取得 GPU 位置路徑
+Get-PnpDevice -FriendlyName "*RTX 8000*" | Select-Object -ExpandProperty LocationPath
+
+# 2. 停用 VM
+Stop-VM -Name "go2-dev-vm"
+
+# 3. 分配 GPU 給 VM
+$gpu = Get-PnpDevice -FriendlyName "*RTX 8000*"
+Dismount-VmHostAssignableDevice
+Add-VMAssignableDevice -LocationPath $gpu.LocationPath -VMName "go2-dev-vm"
+
+# 4. 啟動 VM
+Start-VM -Name "go2-dev-vm"
+```
+
+**方法 2：RemoteFX（較簡單但效能較低）**
+```powershell
+# 適用於不需要完整 GPU 效能的情況
+Set-VMRemoteFx3dVideoAdapter -VMName "go2-dev-vm" -MonitorCount 1 -MaximumResolution "1920x1080"
+```
+
+#### VM 內驗證 GPU
+```bash
+# SSH 進入 VM 後執行
+nvidia-smi
+
+# 若未顯示 GPU，需安裝驅動
+sudo apt update
+sudo apt install nvidia-driver-545
+sudo reboot
+```
+
+### 方案 B：VMware Workstation（更強大但需付費）
+
+#### 優勢
+- ✅ 更好的 GPU Passthrough 支援
+- ✅ 更穩定的 CUDA 支援
+- ✅ 更好的快照功能
+
+#### GPU 配置
+1. 編輯 VM 設定 → 新增 → PCI 裝置
+2. 選擇 NVIDIA Quadro RTX 8000
+3. 啟用「保留所有記憶體」
+4. 啟用「3D 加速」
+
+### SSH 連線配置（Mac → VM）
+
+#### 在 VM 內啟用 SSH Server
+```bash
+# 在 Ubuntu VM 內執行
+sudo apt update
+sudo apt install openssh-server
+sudo systemctl enable ssh
+sudo systemctl start ssh
+
+# 檢查 SSH 狀態
+sudo systemctl status ssh
+
+# 取得 VM IP（記下來）
+ip addr show
+```
+
+#### 在本地 Mac 配置 SSH
+```bash
+# 在 Mac Terminal 執行
+# 新增 SSH 配置
+nano ~/.ssh/config
+
+# 加入以下內容
+Host go2-vm
+    HostName <VM-IP-Address>
+    User developer
+    Port 22
+    IdentityFile ~/.ssh/id_rsa
+
+# 連線測試
+ssh go2-vm
+```
+
+### 效能驗證
+
+```bash
+# 在 VM 內執行
+# 1. CUDA 測試
+nvidia-smi
+
+# 2. PyTorch GPU 測試
+python3 -c "import torch; print(f'CUDA Available: {torch.cuda.is_available()}'); print(f'GPU Count: {torch.cuda.device_count()}'); print(f'GPU Name: {torch.cuda.get_device_name(0)}')"
+
+# 預期輸出：
+# CUDA Available: True
+# GPU Count: 1
+# GPU Name: Quadro RTX 8000
+
+# 3. 簡單效能測試
+python3 -c "import torch; x = torch.rand(5000, 5000).cuda(); y = x @ x; print('GPU Compute Test Passed')"
+```
+
+---
+
+## 🔧 遠端 SSH 配置（進階選項）
+
+### 前置檢查（在 VM 內執行）
 
 **在遠端伺服器上執行**：
 ```bash

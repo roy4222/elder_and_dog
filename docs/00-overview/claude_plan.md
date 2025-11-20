@@ -1,7 +1,7 @@
 # Go2 機器狗智慧尋物系統 — 合併版現況與計畫對照報告
 
 報告日期：2025/11/16  
-分析範圍：`Goal.md` 目標 vs. 專案實際實現（整合自 `claude_plan.md`、`SLAM_實現現況報告.md`）  
+分析範圍：[`Goal.md`](./Goal.md) 目標 vs. 專案實際實現（整合自 `claude_plan.md`、`SLAM_實現現況報告.md`）  
 專案路徑：`/mnt/c/Users/User/Desktop/fju-go2-sdk`
 
 ---
@@ -31,7 +31,7 @@
 
 ---
 
-## 2. 技術對照（Goal.md vs 現況）
+## 2. 技術對照（[Goal.md](./Goal.md) vs 現況）
 
 | 項目 | 目標 | 現況 | 備註 |
 | --- | --- | --- | --- |

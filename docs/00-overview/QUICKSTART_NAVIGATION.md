@@ -232,15 +232,15 @@ source install/setup.bash
 2. **W7-W8**: 建立 `coordinate_transformer` 套件（座標轉換）
 3. **W9**: 將 `simple_patrol_node.py` 升級為 `search_fsm_node.py`
 
-詳見：[docs/quickstart_w6_w9.md](docs/quickstart_w6_w9.md)
+詳見：[../01-guides/quickstart_w6_w9.md](../01-guides/quickstart_w6_w9.md)
 
 ---
 
 ## 📚 詳細文件
 
 - **完整使用指南**：[src/search_logic/README.md](src/search_logic/README.md)
-- **環境配置**：[docs/environment_setup_ubuntu.md](docs/environment_setup_ubuntu.md)
-- **尋物 FSM 設計**：[docs/search_fsm_design.md](docs/search_fsm_design.md)
+- **環境配置**：[../01-guides/environment_setup_ubuntu.md](../01-guides/environment_setup_ubuntu.md)
+- **尋物 FSM 設計**：[../02-design/search_fsm_design.md](../02-design/search_fsm_design.md)
 
 ---
 

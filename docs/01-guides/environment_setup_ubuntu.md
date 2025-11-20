@@ -195,9 +195,9 @@ ros2 launch go2_robot_sdk robot.launch.py \
 
 完成上述環境後，即可依照以下文件繼續開發：
 
-- `docs/gemini_vlm_development.md`：VLM 節點  
-- `docs/coordinate_transformation.md`：座標轉換  
-- `docs/search_fsm_design.md`：尋物狀態機與 Nav2 呼叫流程
+- `docs/02-design/gemini_vlm_backup.md`：VLM 備案節點  
+- `docs/02-design/coordinate_transformation.md`：座標轉換  
+- `docs/02-design/search_fsm_design.md`：尋物狀態機與 Nav2 呼叫流程
 
 ---
 

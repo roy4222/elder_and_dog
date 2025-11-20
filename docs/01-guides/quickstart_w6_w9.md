@@ -138,7 +138,7 @@ mkdir -p config launch test
 # - config/vlm_params.yaml
 # - launch/vlm_standalone.launch.py
 
-# 參考：docs/gemini_vlm_development.md
+# 參考：docs/02-design/gemini_vlm_backup.md
 ```
 
 **步驟 4：安裝 Python 依賴**
@@ -202,7 +202,7 @@ pip install scipy
 # - projection_utils.py
 # - lidar_projection_node.py
 # - config/transformer_params.yaml
-# 參考：docs/coordinate_transformation.md
+# 參考：docs/02-design/coordinate_transformation.md
 ```
 
 ### Day 3-4：實作 LiDAR 投影
@@ -328,7 +328,7 @@ cp Isaac_sim/Unitree/Unitree_L1.json \
 **Docker 替代方案（若本地安裝失敗）**：
 ```bash
 docker pull nvcr.io/nvidia/isaac-sim:2023.1.1
-# 參考：docs/isaac_sim_integration.md 的 Docker 章節
+# 參考：docs/02-design/isaac_sim_integration.md 的 Docker 章節
 ```
 
 **🎯 W8 結束驗收**：
@@ -355,7 +355,7 @@ ros2 pkg create --build-type ament_python search_logic \
 # - search_fsm_node.py
 # - nav2_client.py
 # - config/search_params.yaml
-# 參考：docs/search_fsm_design.md
+# 參考：docs/02-design/search_fsm_design.md
 
 # 編譯
 cd ~/workspace/fju-go2-sdk
@@ -423,7 +423,7 @@ SUCCESS=$(grep -c "✅" test_results.log)
 echo "成功率: $SUCCESS/20"
 ```
 
-**數據記錄表格**：參考 `docs/testing_plan.md` 測試矩陣。
+**數據記錄表格**：參考 `docs/03-testing/testing_plan.md` 測試矩陣。
 
 **🎯 W9 結束驗收**：
 - ✅ 端到端成功率 ≥ 70%（14/20）
@@ -539,7 +539,7 @@ colcon build --packages-select go2_robot_sdk
 
 - **技術文件**：`docs/` 目錄下的所有 .md 文件
 - **範例程式碼**：每份文件都包含完整可執行的範例
-- **測試腳本**：`docs/testing_plan.md`
+- **測試腳本**：`docs/03-testing/testing_plan.md`
 - **問題回報**：GitHub Issues（標籤：`help-wanted`）
 
 ---

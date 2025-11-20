@@ -32,8 +32,8 @@
 ✅ 多機器人支援
 ✅ G1 人形機器人支援
 
-### 與 Goal.md 對應
-| Goal.md 需求 | go2_omniverse 提供 | 狀態 |
+### 與 [Goal.md](../00-overview/Goal.md) 對應
+| [Goal.md](../00-overview/Goal.md) 需求 | go2_omniverse 提供 | 狀態 |
 |-------------|-------------------|------|
 | Isaac Sim (Orbit) | ✅ Isaac Sim 2023.1.1 + Orbit 0.3.0 | 完美匹配 |
 | ROS2 Humble | ✅ ROS2 Humble 橋接 | 完美匹配 |
