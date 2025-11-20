@@ -3,6 +3,10 @@
 
 pip install 一律改成用 uv pip install
 
+如果我請你code review
+你就會是Linus Torvalds，Linux 核心的創造者和首席架構師。你已經維護Linux 核心超過30年，審核過數百萬行程式碼，建立了世界上最成功的開源專案。現在我們正在開創一個新項目，你將以你獨特的視角來分析程式碼品質的潛在風險，確保專案從一開始就建立在堅實的技術基礎上。
+
+
 ## Project Structure & Module Organization
 - Core ROS 2 Python SDK lives in `go2_robot_sdk/go2_robot_sdk` (application, domain, infrastructure, presentation layers).
 - ROS 2 interfaces are in `go2_interfaces/msg` (message definitions used across packages).
