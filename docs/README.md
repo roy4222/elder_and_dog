@@ -32,14 +32,25 @@
 - [quickstart_w6_w9.md](./01-guides/quickstart_w6_w9.md) — W6-W9 每日任務 Checklist  
 - [remote_gpu_setup.md](./01-guides/remote_gpu_setup.md) — Mac → Windows VM → Quadro RTX 8000 三層拓樸設定  
 - [webrtc_troubleshooting.md](./01-guides/webrtc_troubleshooting.md) — WebRTC 常見錯誤與對應處置  
+- 
+- [slam_nav/phase1_execution_guide.md](./01-guides/slam_nav/phase1_execution_guide.md) — Phase 1（小空間）SLAM + Nav2 執行指南  
+- [slam_nav/phase2_execution_guide.md](./01-guides/slam_nav/phase2_execution_guide.md) — Phase 2（擴展空間）測試流程  
+- [slam_nav/quick_reference.md](./01-guides/slam_nav/quick_reference.md) — SLAM/Nav2 指令速查、常見陷阱  
 - [testing_and_verification.md](./03-testing/testing_and_verification.md) — TEST.sh 使用方式（亦列在測試區）
+
+#### SLAM/Nav2 測試套件（`docs/01-guides/slam_nav/`）
+- [README](./01-guides/slam_nav/README.md) — Phase 1/2 測試總覽、核心知識點、交付物與故障排查導覽。
+- [Phase 1 指南](./01-guides/slam_nav/phase1_execution_guide.md) — 1-2 坪環境的建圖、Nav2 單點導航、地圖存檔。
+- [Phase 2 指南](./01-guides/slam_nav/phase2_execution_guide.md) — 4-5 坪環境、多點導航、避障、巡邏測試與評分標準。
+- [速查表](./01-guides/slam_nav/quick_reference.md) — 複製貼上指令、5 大陷阱與常用命令。
+- [測試日誌](./04-notes/dev_notes/20251121_slam_test.md) — 每次實驗的觀測數據與結果紀錄。
 
 ### 02-design · 架構與模組
 - [integration_plan.md](./02-design/integration_plan.md) — W6-W9 技術整合藍圖（Plan A：COCO）  
 - [coco_vlm_development.md](./02-design/coco_vlm_development.md) — COCO VLM 主力方案指南  
 - [gemini_vlm_backup.md](./02-design/gemini_vlm_backup.md) — Gemini VLM 備案（Plan B，僅在 COCO 失敗時使用）  
 - [coordinate_transformation.md](./02-design/coordinate_transformation.md) — LiDAR 投影 / 地面假設兩種轉換策略  
-- [search_fsm_design.md](./02-design/search_fsm_design.md) — 尋物狀態機與 Nav2 整合  我接著要來測試 SLAM + Nav2 功能 我之前連接機器人功能測到 [testing_and_verification.md](docs/03-testing/testing_and_verification.md)  接下來該怎麼做呢 請你詳細讀code再回答我吧
+- [search_fsm_design.md](./02-design/search_fsm_design.md) — 尋物狀態機與 Nav2 整合計畫  
 - [isaac_sim_integration.md](./02-design/isaac_sim_integration.md) — Isaac Sim / go2_omniverse 流程  
 - [package_structure.md](./02-design/package_structure.md) — `vision_vlm`, `coordinate_transformer`, `search_logic` 目錄規範
 
