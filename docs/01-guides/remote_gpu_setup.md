@@ -461,7 +461,7 @@ camera_resolution = (2560, 1440)  # 2K（若需要）
 
 ```bash
 # 安裝 LLaVA（開源 VLM）
-pip install llava
+uv pip install llava
 
 # 下載模型（約 13GB，VRAM 需求 < 20GB）
 # 您的 48GB 完全足夠

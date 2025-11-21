@@ -109,7 +109,7 @@ WARNING:go2_robot_sdk.infrastructure.webrtc.go2_connection:❌ SCTP 握手超時
 實務上還需要同時檢查：WSL2 網路、機器當下模式、是否有 App 佔線等因素。
 
 **解決方案**：
-1. 檢查版本並降級：`pip install aiortc==1.9.0 --force-reinstall`
+1. 檢查版本並降級：`uv pip install aiortc==1.9.0 --force-reinstall`
 2. 確認未添加不必要的 STUN 配置
 
 ---
@@ -221,7 +221,7 @@ EOF
 **步驟 2：如果版本不符，執行修復**
 ```bash
 # 強制重新安裝指定版本
-pip install aiortc==1.9.0 --force-reinstall --no-cache-dir
+uv pip install aiortc==1.9.0 --force-reinstall --no-cache-dir
 
 # 驗證修復成功
 python3 -c "import aiortc; assert aiortc.__version__ == '1.9.0', f'版本仍為 {aiortc.__version__}'"
@@ -254,7 +254,7 @@ bash start_go2_simple.sh
 
 **症狀**：
 ```
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 # → aiortc 被升級到 1.14.0（可能來自 torch/torchvision 依賴鏈）
 ```
 

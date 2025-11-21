@@ -90,7 +90,7 @@ cd ~/workspace/fju-go2-sdk
 
 # 安裝依賴
 rosdep install --from-paths src --ignore-src -r -y
-pip install -r requirements.txt  # 專案根目錄的 requirements.txt
+uv pip install -r requirements.txt --force-reinstall  # 專案根目錄的 requirements.txt
 
 # 編譯
 colcon build
@@ -143,7 +143,7 @@ mkdir -p config launch test
 
 **步驟 4：安裝 Python 依賴**
 ```bash
-pip install google-generativeai pillow numpy
+uv pip install google-generativeai pillow numpy --force-reinstall
 ```
 
 **步驟 5：編譯與測試**
@@ -196,7 +196,7 @@ ros2 pkg create --build-type ament_python coordinate_transformer \
   --dependencies rclpy sensor_msgs geometry_msgs vision_msgs tf2_ros cv_bridge message_filters
 
 # 安裝依賴
-pip install scipy
+uv pip install scipy --force-reinstall
 
 # 複製程式碼
 # - projection_utils.py

@@ -126,7 +126,7 @@ cd fju-go2-sdk
 
 # 3. 編譯專案
 rosdep install --from-paths src --ignore-src -r -y
-pip install -r src/requirements.txt
+uv pip install -r requirements.txt --force-reinstall
 colcon build
 source install/setup.bash
 
@@ -186,7 +186,7 @@ camera_resolution = (1920, 1080)  # Full HD
 ### 4. VLM 本地推論（備用方案）
 ```bash
 # 若 Gemini API 受阻，可用本地模型
-pip install llava
+uv pip install llava
 
 # 下載 LLaVA 模型（約 13GB）
 # 您的 48GB VRAM 可輕鬆運行
