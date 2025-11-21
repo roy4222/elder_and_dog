@@ -39,7 +39,7 @@
 - [coco_vlm_development.md](./02-design/coco_vlm_development.md) — COCO VLM 主力方案指南  
 - [gemini_vlm_backup.md](./02-design/gemini_vlm_backup.md) — Gemini VLM 備案（Plan B，僅在 COCO 失敗時使用）  
 - [coordinate_transformation.md](./02-design/coordinate_transformation.md) — LiDAR 投影 / 地面假設兩種轉換策略  
-- [search_fsm_design.md](./02-design/search_fsm_design.md) — 尋物狀態機與 Nav2 整合  
+- [search_fsm_design.md](./02-design/search_fsm_design.md) — 尋物狀態機與 Nav2 整合  我接著要來測試 SLAM + Nav2 功能 我之前連接機器人功能測到 [testing_and_verification.md](docs/03-testing/testing_and_verification.md)  接下來該怎麼做呢 請你詳細讀code再回答我吧
 - [isaac_sim_integration.md](./02-design/isaac_sim_integration.md) — Isaac Sim / go2_omniverse 流程  
 - [package_structure.md](./02-design/package_structure.md) — `vision_vlm`, `coordinate_transformer`, `search_logic` 目錄規範
 
