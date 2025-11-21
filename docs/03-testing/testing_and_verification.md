@@ -81,7 +81,8 @@ bash TEST.sh help
 bash TEST.sh health
 
 # 執行單個命令
-bash TEST.sh sit
+bash TEST.sh sit(坐下)
+bash TEST.sh standdown (趴下)
 bash TEST.sh forward
 bash TEST.sh imu
 ```
@@ -101,12 +102,14 @@ bash TEST.sh imu
 **範例**：
 ```bash
 bash TEST.sh sit      # 坐下
-bash TEST.sh stand    # 站起
+bash TEST.sh stand
+bash TEST.sh standdown   # 站立改姿態；需執行兩次才會完全趴下
 bash TEST.sh balance  # 平衡站立
 ```
 
 **動作說明**：
 - **sit**：機器狗的下半身坐下，上半身保持直立
+- **standdown**：站立改姿態的中間動作，**需連續執行兩次** 才會把身體完全放低（趴下）
 - **stand**：機器狗完全站起，四肢伸直（正常站立姿態）
 - **balance**：機器狗保持平衡站立姿態（運動準備狀態）
 
@@ -307,7 +310,7 @@ $ bash TEST.sh posture-test
 
 | API ID | 命令 | 需要觀察 | 備註 |
 |--------|------|---------|-----|
-| 1005 | standdown | 是否改變姿態但仍站立？ | 應作為 sit 的準備動作 |
+| 1005 | standdown | 是否改變姿態但仍站立？ | 應作為 sit 的準備動作（實測需連續下達兩次才會完全趴下） |
 | 1009 | sit | 下半身坐下 vs 完全坐下 | **重點關注** |
 | 1010 | risefit | 是否成功從坐下狀態站起 | 應與 sit 配對 |
 | 1004 | stand | 是否回到完全站立 | 標準動作 |
