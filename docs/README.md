@@ -21,11 +21,10 @@
 
 ### 00-overview · 專案概覽
 - [Goal.md](./00-overview/Goal.md) — 系統願景、分期目標  
-- [claude_plan.md](./00-overview/claude_plan.md) — 現況 vs 目標差異分析（55%）  
-- [conformance_check_plan.md](./00-overview/conformance_check_plan.md) — 模擬器/現況符合度評估  
-- [QUICKSTART_GPU.md](./00-overview/QUICKSTART_GPU.md) — 遠端 GPU 快速啟動  
-- [QUICKSTART_NAVIGATION.md](./00-overview/QUICKSTART_NAVIGATION.md) — Nav2 測試腳本  
-- [README_SIMPLE.md](./00-overview/README_SIMPLE.md) — 壓縮版啟動指引
+- [claude_plan.md](./00-overview/claude_plan.md) — 現況 vs 目標差異分析（55%，已依 2025/11/19 決議復核）  
+- [conformance_check_plan.md](./00-overview/conformance_check_plan.md) — 模擬器/現況符合度評估與行動計畫
+
+> ⚠️ 操作指南與 Quickstart 請改參閱 `01-guides/`（例如 `quickstart_w6_w9.md`、`remote_gpu_setup.md`、`QUICKSTART_GPU.md`、`QUICKSTART_NAVIGATION.md`）
 
 ### 01-guides · 操作手冊
 - [dependency_management.md](./01-guides/dependency_management.md) — Python 依賴鎖定策略、`uv` 使用方式  
@@ -38,7 +37,7 @@
 ### 02-design · 架構與模組
 - [integration_plan.md](./02-design/integration_plan.md) — W6-W9 技術整合藍圖（Plan A：COCO）  
 - [coco_vlm_development.md](./02-design/coco_vlm_development.md) — COCO VLM 主力方案指南  
-- [gemini_vlm_backup.md](./02-design/gemini_vlm_backup.md) — Gemini VLM 備案（Plan B）  
+- [gemini_vlm_backup.md](./02-design/gemini_vlm_backup.md) — Gemini VLM 備案（Plan B，僅在 COCO 失敗時使用）  
 - [coordinate_transformation.md](./02-design/coordinate_transformation.md) — LiDAR 投影 / 地面假設兩種轉換策略  
 - [search_fsm_design.md](./02-design/search_fsm_design.md) — 尋物狀態機與 Nav2 整合  
 - [isaac_sim_integration.md](./02-design/isaac_sim_integration.md) — Isaac Sim / go2_omniverse 流程  

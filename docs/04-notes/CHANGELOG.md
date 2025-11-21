@@ -1,5 +1,22 @@
 # 文件修正記錄
 
+## 2025/11/19 - 會議決議與策略調整
+
+### 決議摘要
+- **時程**：第一階段發表改為 12/17（週三），文件繳交 12/12，12/10 完成內容、12/11 校對。
+- **技術策略**：
+  - VLM 以 **COCO 本地推論** 為主力（Plan A），Gemini Robotics API 降級為備案（Plan B），OpenAI/Claude 保留為最後手段。
+  - 必須在遠端 GPU（Quadro RTX 8000）上部署 **Isaac Sim + go2_omniverse**，以解決實機過熱/噪音/空間限制，做為 Demo 保險。
+  - **座標轉換 + 尋物 FSM** 列為 W7-W9 核心任務，與 Nav2 完成閉環；導入「模擬器→實機」驗證鏈。
+- **展示策略**：強調「技術火力展示」，以模擬器影片 + 實機基本動作作為 Plan A/B；若 VLM 失敗，保留 COCO + 手動導航備援。
+- **文件**：要求各文件明確註記依據 2025/11/19 會議決議，包含 User Story / DB Schema / 架構圖動畫化。
+
+### 後續行動
+1. 柏翊：11/26 前完成 Windows VM ↔ GPU ↔ Isaac Sim 串接與 SOP (`remote_gpu_setup.md`)。
+2. 如薇、旭：12/03 前交付 COCO VLM Plan A（含 Detection2DArray、影像 topic remap 指南）。
+3. 全組：12/05 前完成座標轉換基礎（LiDAR 投影 + tf2 → Nav2 目標），12/09 完成尋物 FSM 端到端。
+4. 文件負責：12/10 前更新 `Goal.md`、`README.md`、`conformance_check_plan.md` 等，加入 User Story / DB 章節與會議標註；12/13 後產出具動畫效果的架構圖。
+
 ## 2025/11/16 - 文件一致性修正
 
 ### 修正項目總覽

@@ -449,7 +449,7 @@ uv pip install -r requirements.txt --force-reinstall --no-cache-dir
 - **[dependency_management.md](./dependency_management.md)**：Python 依賴版本管理詳細指南
 - **[README.md](./README.md) 快速開始**：新成員入門檢查清單
 - **go2_robot_sdk/infrastructure/webrtc/go2_connection.py**：WebRTC 連接實作原始碼
-- **docs/dev_notes/2025-11-18-dev.md**：完整的診斷過程與技術分析
+- **docs/04-notes/dev_notes/2025-11-18-dev.md**：完整的診斷過程與技術分析
 
 ---
 

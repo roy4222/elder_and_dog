@@ -3,7 +3,8 @@
 **套件名稱：** `coordinate_transformer`
 **主要節點：** `lidar_projection_node` / `ground_assumption_node`
 **開發週次：** W7-W8
-**難度：** ⭐⭐⭐⭐ 高
+**難度：** ⭐⭐⭐⭐ 高  
+> 根據 2025/11/19 會議決議，此文件為座標轉換核心指引（W7-W8 必達）
 
 **重要提醒：**
 - 本文件中使用 `camera_link` 代表相機座標系 frame，實際實作時請對應真實 URDF 中的 frame 名稱（可能是 `front_camera_link` 或其他）
