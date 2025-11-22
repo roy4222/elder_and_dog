@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 
 # ==========================================
 # Go2 機器人測試腳本 - P0 核心功能
@@ -9,7 +9,9 @@
 set -e
 
 # --- 全域變數 ---
-WORKSPACE_ROOT="/home/roy422/elder_and_dog"
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+PROJECT_ROOT="$SCRIPT_DIR"
+WORKSPACE_ROOT=$(cd "$PROJECT_ROOT/../.." && pwd)
 ROBOT_IP="${ROBOT_IP:-192.168.12.1}"
 
 # --- 顏色定義 ---
@@ -30,8 +32,8 @@ check_environment() {
     echo -e "${RED}✗ 錯誤：ROS2 環境未載入${NC}"
     echo ""
     echo "請執行："
-    echo "  source /opt/ros/humble/setup.bash"
-    echo "  source $WORKSPACE_ROOT/install/setup.bash"
+    echo "  source /opt/ros/humble/setup.zsh"
+    echo "  source $WORKSPACE_ROOT/install/setup.zsh"
     echo ""
     exit 1
   fi
@@ -42,7 +44,7 @@ check_environment() {
     echo ""
     echo "請執行："
     echo "  cd $WORKSPACE_ROOT"
-    echo "  source install/setup.bash"
+    echo "  source install/setup.zsh"
     echo ""
     exit 1
   fi
@@ -54,8 +56,8 @@ check_driver() {
     echo -e "${RED}✗ 錯誤：Go2 驅動節點未運行${NC}"
     echo ""
     echo "請先啟動驅動："
-    echo "  cd $WORKSPACE_ROOT"
-    echo "  bash start_go2_simple.sh"
+    echo "  cd $PROJECT_ROOT"
+    echo "  zsh start_go2_simple.sh"
     echo ""
     exit 1
   fi
@@ -482,7 +484,7 @@ show_help() {
 Go2 機器人測試腳本 - P0 核心版
 
 使用方式：
-  bash TEST.sh <命令>
+  zsh TEST.sh <命令>
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 基本姿態控制：
@@ -528,14 +530,14 @@ Go2 機器人測試腳本 - P0 核心版
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 例子：
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  bash TEST.sh sit
-  bash TEST.sh forward
-  bash TEST.sh health
-  bash TEST.sh imu
+  zsh TEST.sh sit
+  zsh TEST.sh forward
+  zsh TEST.sh health
+  zsh TEST.sh imu
 
 前置條件：
-  1. 啟動驅動：cd /home/roy422/elder_and_dog && bash start_go2_simple.sh
-  2. 載入環境：source /opt/ros/humble/setup.bash && source install/setup.bash
+  1. 啟動驅動：cd /home/roy422/ros2_ws/src/elder_and_dog && zsh start_go2_simple.sh
+  2. 載入環境：source /opt/ros/humble/setup.zsh && source install/setup.zsh
   3. 設定機器人IP：export ROBOT_IP="192.168.12.1"
 
 EOF
@@ -600,7 +602,7 @@ main() {
     *)
       echo -e "${RED}✗ 未知指令：$1${NC}"
       echo ""
-      echo "使用 'bash TEST.sh help' 查看所有可用命令"
+      echo "使用 'zsh TEST.sh help' 查看所有可用命令"
       exit 1
       ;;
   esac

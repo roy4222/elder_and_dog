@@ -32,7 +32,7 @@
 ### 檔案位置
 
 ```
-/home/roy422/elder_and_dog/TEST.sh
+/home/roy422/ros2_ws/src/elder_and_dog/TEST.sh
 ```
 
 ---
@@ -43,9 +43,9 @@
 
 1. **啟動機器人驅動**（終端 1）
 
-```bash
-cd /home/roy422/elder_and_dog
-bash start_go2_simple.sh
+```zsh
+cd /home/roy422/ros2_ws/src/elder_and_dog
+zsh start_go2_simple.sh
 ```
 
 輸出應顯示：
@@ -65,26 +65,27 @@ bash start_go2_simple.sh
 
 2. **準備測試環境**（終端 2）
 
-```bash
-source /opt/ros/humble/setup.bash
-cd /home/roy422/elder_and_dog
-source install/setup.bash
+```zsh
+source /opt/ros/humble/setup.zsh
+cd /home/roy422/ros2_ws
+source install/setup.zsh
+cd src/elder_and_dog
 ```
 
 ### 基本使用
 
-```bash
+```zsh
 # 顯示幫助
-bash TEST.sh help
+zsh TEST.sh help
 
 # 查看系統狀態
-bash TEST.sh health
+zsh TEST.sh health
 
 # 執行單個命令
-bash TEST.sh sit(坐下)
-bash TEST.sh standdown (趴下)
-bash TEST.sh forward
-bash TEST.sh imu
+zsh TEST.sh sit(坐下)
+zsh TEST.sh standdown (趴下)
+zsh TEST.sh forward
+zsh TEST.sh imu
 ```
 
 ---
@@ -100,11 +101,11 @@ bash TEST.sh imu
 | `balance` | 平衡站立（重要！） | 瞬間 |
 
 **範例**：
-```bash
-bash TEST.sh sit      # 坐下
-bash TEST.sh stand
-bash TEST.sh standdown   # 站立改姿態；需執行兩次才會完全趴下
-bash TEST.sh balance  # 平衡站立
+```zsh
+zsh TEST.sh sit      # 坐下
+zsh TEST.sh stand
+zsh TEST.sh standdown   # 站立改姿態；需執行兩次才會完全趴下
+zsh TEST.sh balance  # 平衡站立
 ```
 
 **動作說明**：
@@ -126,11 +127,11 @@ bash TEST.sh balance  # 平衡站立
 | `jump` | 前跳 | 1 秒 |
 
 **範例**：
-```bash
-bash TEST.sh wallow   # 打滾
-bash TEST.sh hello    # 打招呼
-bash TEST.sh dance1   # 舞蹈 1
-bash TEST.sh flip     # 前翻
+```zsh
+zsh TEST.sh wallow   # 打滾
+zsh TEST.sh hello    # 打招呼
+zsh TEST.sh dance1   # 舞蹈 1
+zsh TEST.sh flip     # 前翻
 ```
 
 **預期輸出**：
@@ -150,10 +151,10 @@ bash TEST.sh flip     # 前翻
 | `stop` | 立即停止 | 0 | 瞬間 |
 
 **範例**：
-```bash
-bash TEST.sh forward  # 前進 3 秒
-bash TEST.sh left     # 左轉 3 秒
-bash TEST.sh stop     # 停止
+```zsh
+zsh TEST.sh forward  # 前進 3 秒
+zsh TEST.sh left     # 左轉 3 秒
+zsh TEST.sh stop     # 停止
 ```
 
 **預期輸出**：
@@ -175,10 +176,10 @@ bash TEST.sh stop     # 停止
 | `state` | 機器狀態 | 數值流 | 10 秒 |
 
 **範例**：
-```bash
-bash TEST.sh joint   # 監測關節（10 秒自動停止）
-bash TEST.sh imu     # 監測 IMU（10 秒自動停止）
-bash TEST.sh lidar   # 監測 LiDAR 頻率（5 秒自動停止）
+```zsh
+zsh TEST.sh joint   # 監測關節（10 秒自動停止）
+zsh TEST.sh imu     # 監測 IMU（10 秒自動停止）
+zsh TEST.sh lidar   # 監測 LiDAR 頻率（5 秒自動停止）
 ```
 
 **預期輸出**（joint）：
@@ -210,11 +211,11 @@ effort: [1.2, 2.3, 1.8, ...]
 | `help` | 顯示幫助 | 命令清單與用法 |
 
 **範例**：
-```bash
-bash TEST.sh health       # 完整系統檢查
-bash TEST.sh list-topics  # 列出 13 個 topics
-bash TEST.sh list-nodes   # 列出 26 個節點
-bash TEST.sh help         # 顯示所有命令
+```zsh
+zsh TEST.sh health       # 完整系統檢查
+zsh TEST.sh list-topics  # 列出 13 個 topics
+zsh TEST.sh list-nodes   # 列出 26 個節點
+zsh TEST.sh help         # 顯示所有命令
 ```
 
 **health 命令輸出示例**：
@@ -254,8 +255,8 @@ bash TEST.sh help         # 顯示所有命令
 自動化測試序列，用於確定不同坐下/站起命令的實際行為。這對於理解 Go2 SDK 中哪個命令實現「完全坐下」vs「下半身坐下」至關重要。
 
 **命令**：
-```bash
-bash TEST.sh posture-test
+```zsh
+zsh TEST.sh posture-test
 ```
 
 **測試流程**（自動執行 5 步）：
@@ -268,8 +269,8 @@ bash TEST.sh posture-test
 **每步間隔**：3 秒（讓機器人完成動作）
 
 **執行示例**：
-```bash
-$ bash TEST.sh posture-test
+```zsh
+$ zsh TEST.sh posture-test
 
 ========================================
   坐下命令驗證序列
@@ -342,35 +343,35 @@ API ID | 命令名稱  | 實際行為 | 說明
 
 預計實現以下功能（框架已預留）：
 
-```bash
-bash TEST.sh start-slam      # 啟動 SLAM Toolbox
-bash TEST.sh stop-slam       # 停止 SLAM
-bash TEST.sh start-nav2      # 啟動 Nav2 導航
-bash TEST.sh send-goal       # 發送導航目標
-bash TEST.sh save-map        # 保存地圖
-bash TEST.sh load-map        # 載入地圖
+```zsh
+zsh TEST.sh start-slam      # 啟動 SLAM Toolbox
+zsh TEST.sh stop-slam       # 停止 SLAM
+zsh TEST.sh start-nav2      # 啟動 Nav2 導航
+zsh TEST.sh send-goal       # 發送導航目標
+zsh TEST.sh save-map        # 保存地圖
+zsh TEST.sh load-map        # 載入地圖
 ```
 
 ### P2（物體偵測與巡邏）- ⏳ 計畫中
 
 預計實現以下功能（框架已預留）：
 
-```bash
-bash TEST.sh start-coco      # 啟動 COCO 物體偵測
-bash TEST.sh stop-coco       # 停止偵測
-bash TEST.sh show-annotated  # 顯示標註影像
-bash TEST.sh start-patrol    # 啟動自動巡邏
-bash TEST.sh stop-patrol     # 停止巡邏
+```zsh
+zsh TEST.sh start-coco      # 啟動 COCO 物體偵測
+zsh TEST.sh stop-coco       # 停止偵測
+zsh TEST.sh show-annotated  # 顯示標註影像
+zsh TEST.sh start-patrol    # 啟動自動巡邏
+zsh TEST.sh stop-patrol     # 停止巡邏
 ```
 
 ### P3（互動菜單與配置）- ⏳ 計畫中
 
 預計實現以下功能（框架已預留）：
 
-```bash
-bash TEST.sh menu            # 進入互動式菜單
-bash TEST.sh save-preset     # 保存配置
-bash TEST.sh load-preset     # 載入配置
+```zsh
+zsh TEST.sh menu            # 進入互動式菜單
+zsh TEST.sh save-preset     # 保存配置
+zsh TEST.sh load-preset     # 載入配置
 ```
 
 ---
@@ -385,9 +386,11 @@ bash TEST.sh load-preset     # 載入配置
 ```
 
 **解決方案**：
-```bash
-source /opt/ros/humble/setup.bash
-source /home/roy422/elder_and_dog/install/setup.bash
+```zsh
+source /opt/ros/humble/setup.zsh
+cd /home/roy422/ros2_ws
+source install/setup.zsh
+cd src/elder_and_dog
 ```
 
 ### Q2：運行 TEST.sh 時出現「Go2 驅動節點未運行」
@@ -399,9 +402,9 @@ source /home/roy422/elder_and_dog/install/setup.bash
 
 **解決方案**：
 先在另一個終端啟動驅動：
-```bash
-cd /home/roy422/elder_and_dog
-bash start_go2_simple.sh
+```zsh
+cd /home/roy422/ros2_ws/src/elder_and_dog
+zsh start_go2_simple.sh
 ```
 
 ### Q3：機器狗不響應動作命令
@@ -411,15 +414,15 @@ bash start_go2_simple.sh
 2. 手機 App 仍在連接
 
 **解決方案**：
-```bash
+```zsh
 # 檢查健康狀態
-bash TEST.sh health
+zsh TEST.sh health
 
 # 確認機器人 IP 和連接
 export ROBOT_IP="192.168.12.1"
 
 # 關閉手機 App，重新啟動驅動
-bash start_go2_simple.sh
+zsh start_go2_simple.sh
 ```
 
 ### Q4：感測器監測沒有輸出數據
@@ -429,9 +432,9 @@ bash start_go2_simple.sh
 2. Topic 名稱不存在
 
 **解決方案**：
-```bash
+```zsh
 # 列出所有可用的 topics
-bash TEST.sh list-topics
+zsh TEST.sh list-topics
 
 # 查看特定 topic 是否存在
 ros2 topic list | grep imu
@@ -446,7 +449,7 @@ NumPy version >=1.17.3 and <1.25.0 is required...
 
 **解決方案**：
 已在環境設置時修正。驗證：
-```bash
+```zsh
 python3.10 -c "import numpy; print(numpy.__version__)"
 # 應輸出 1.24.4
 ```
@@ -472,8 +475,8 @@ python3.10 -c "import numpy; print(numpy.__version__)"
 | `Damp` | 1001 | 進入被動模式 | ⚠️ 停止電源控制，慎用 |
 
 **使用範例**：
-```bash
-bash TEST.sh stand    # 使用 TEST.sh
+```zsh
+zsh TEST.sh stand    # 使用 TEST.sh
 # 或直接用 ROS2：
 ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
   "{topic: 'rt/api/sport/request', api_id: 1004}"
@@ -499,12 +502,12 @@ ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
 | `Scrape` | 1029 | 刮擦 | 瞬間 | 待測試 |
 
 **使用範例**：
-```bash
-bash TEST.sh wallow    # 打滾
-bash TEST.sh hello     # 打招呼
-bash TEST.sh dance1    # 舞蹈 1
-bash TEST.sh flip      # 前翻
-bash TEST.sh jump      # 前跳
+```zsh
+zsh TEST.sh wallow    # 打滾
+zsh TEST.sh hello     # 打招呼
+zsh TEST.sh dance1    # 舞蹈 1
+zsh TEST.sh flip      # 前翻
+zsh TEST.sh jump      # 前跳
 ```
 
 ### 🏅 特技動作（Tricks & Stunts）
@@ -536,12 +539,12 @@ bash TEST.sh jump      # 前跳
 | `EconomicGait` | 1035 | 經濟步態 | 節能模式 |
 
 **使用範例**（已在 TEST.sh 實現）：
-```bash
-bash TEST.sh forward   # 前進 3 秒
-bash TEST.sh backward  # 後退 3 秒
-bash TEST.sh left      # 左轉 3 秒
-bash TEST.sh right     # 右轉 3 秒
-bash TEST.sh stop      # 停止
+```zsh
+zsh TEST.sh forward   # 前進 3 秒
+zsh TEST.sh backward  # 後退 3 秒
+zsh TEST.sh left      # 左轉 3 秒
+zsh TEST.sh right     # 右轉 3 秒
+zsh TEST.sh stop      # 停止
 ```
 
 ### ⚙️ 身體參數控制（Body Control）
@@ -556,7 +559,7 @@ bash TEST.sh stop      # 停止
 | `Euler` | 1007 | 歐拉角控制 | roll/pitch/yaw | 需要參數 |
 
 **使用範例**（需要擴展 TEST.sh）：
-```bash
+```zsh
 # 直接用 ROS2（示例）
 ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
   "{topic: 'rt/api/sport/request', api_id: 1013, parameter: '0.5'}"
@@ -589,31 +592,31 @@ ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
 若要系統地測試所有命令，建議按以下順序進行：
 
 1. **基本姿態**（安全、易驗證）
-   ```bash
-   bash TEST.sh sit
-   bash TEST.sh stand
-   bash TEST.sh balance
+   ```zsh
+   zsh TEST.sh sit
+   zsh TEST.sh stand
+   zsh TEST.sh balance
    ```
 
 2. **簡單動作**（低風險）
-   ```bash
-   bash TEST.sh hello
-   bash TEST.sh stretch
-   bash TEST.sh wallow
+   ```zsh
+   zsh TEST.sh hello
+   zsh TEST.sh stretch
+   zsh TEST.sh wallow
    ```
 
 3. **複雜動作**（中等風險，需要空間）
-   ```bash
-   bash TEST.sh dance1
-   bash TEST.sh dance2
-   bash TEST.sh flip
-   bash TEST.sh jump
+   ```zsh
+   zsh TEST.sh dance1
+   zsh TEST.sh dance2
+   zsh TEST.sh flip
+   zsh TEST.sh jump
    ```
 
 4. **特技動作**（高風險，需要寬敞空間）
-   ```bash
+   ```zsh
    # 僅在確保安全的情況下執行
-   # bash TEST.sh 會新增 trick 命令以支援
+   # zsh TEST.sh 會新增 trick 命令以支援
    ```
 
 ---
@@ -624,11 +627,11 @@ ros2 topic pub --once /webrtc_req go2_interfaces/msg/WebRtcReq \
 
 連續測試多個功能：
 
-```bash
+```zsh
 # 測試所有動作
 for action in sit stand balance; do
   echo "測試 $action..."
-  bash TEST.sh $action
+  zsh TEST.sh $action
   sleep 1
 done
 ```
@@ -637,8 +640,8 @@ done
 
 將輸出保存到文件：
 
-```bash
-bash TEST.sh health > /tmp/health_check.log
+```zsh
+zsh TEST.sh health > /tmp/health_check.log
 cat /tmp/health_check.log
 ```
 
@@ -646,7 +649,7 @@ cat /tmp/health_check.log
 
 若要更細粒度的控制，可直接使用 ROS2 命令：
 
-```bash
+```zsh
 # 發送自定義速度
 ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
   "{linear: {x: 0.5}, angular: {z: 0.2}}" -r 10
@@ -660,7 +663,7 @@ ros2 topic echo /imu
 
 ### 使用 RViz 進行可視化
 
-```bash
+```zsh
 # 啟動 RViz（若驅動已運行）
 rviz2
 
@@ -678,11 +681,11 @@ rviz2
 ### 目錄結構
 
 ```
-/home/roy422/elder_and_dog/
+/home/roy422/ros2_ws/src/elder_and_dog/
 ├── TEST.sh                    # 主測試腳本（370 行）
 ├── start_go2_simple.sh        # 快速啟動驅動
 ├── install/                   # ROS2 編譯結果
-│   └── setup.bash             # 環境變數
+│   └── setup.zsh             # 環境變數
 ├── src/
 │   └── go2_robot_sdk/
 │       ├── launch/
@@ -730,7 +733,7 @@ TEST.sh 包含以下模組：
 若遇到問題，請：
 
 1. 檢查本文檔中的[常見問題](#常見問題)章節
-2. 執行 `bash TEST.sh health` 確認系統狀態
+2. 執行 `zsh TEST.sh health` 確認系統狀態
 3. 查看 ROS2 日誌：`~/.ros/log/`
 4. 提交 GitHub Issue（標籤 `test-script` 或 `help-wanted`）
 

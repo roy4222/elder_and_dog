@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 
 #
 # 快速啟動 Go2 機器人驅動
@@ -6,6 +6,9 @@
 #
 
 set -e
+
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+WORKSPACE_ROOT=$(cd "$SCRIPT_DIR/../.." && pwd)
 
 # 設置顏色輸出
 GREEN='\033[0;32m'
@@ -30,16 +33,16 @@ fi
 echo -e "${YELLOW}環境配置：${NC}"
 echo "  Robot IP: $ROBOT_IP"
 echo "  Connection Type: $CONN_TYPE"
-echo "  Workspace: $(pwd)"
+echo "  Workspace: $WORKSPACE_ROOT"
 echo ""
 
 # source ROS2
 echo -e "${YELLOW}載入 ROS2 環境...${NC}"
-source /opt/ros/humble/setup.bash
+source /opt/ros/humble/setup.zsh
 
 # source workspace
 echo -e "${YELLOW}載入 workspace...${NC}"
-source install/setup.bash
+source "$WORKSPACE_ROOT/install/setup.zsh"
 
 # 導出機器人 IP
 export ROBOT_IP="$ROBOT_IP"
@@ -60,4 +63,3 @@ ros2 launch go2_robot_sdk robot.launch.py \
   foxglove:=false \
   joystick:=false \
   teleop:=false
-

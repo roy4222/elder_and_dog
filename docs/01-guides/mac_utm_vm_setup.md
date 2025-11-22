@@ -226,9 +226,9 @@ sudo apt-get install -y \
 sudo rosdep init
 rosdep update
 
-# 配置 bashrc（重要！）
-echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-source ~/.bashrc
+# 配置 zshrc（預設 shell 為 zsh；若你改用 bash，請將下列檔名改為 .bashrc，setup.zsh 改為 setup.bash）
+echo "source /opt/ros/humble/setup.zsh" >> ~/.zshrc
+source ~/.zshrc
 
 echo "✅ ROS2 Humble 安裝完成！"
 ```
@@ -241,7 +241,7 @@ ros2 --version
 # 輸出：ROS 2 humble release
 
 # 測試 ROS2 環境
-source /opt/ros/humble/setup.bash
+source /opt/ros/humble/setup.zsh
 ros2 topic list  # 應輸出空清單（目前沒運行的節點）
 ```
 
@@ -269,11 +269,8 @@ cd elder_and_dog
 # 切到專案目錄
 cd ~/elder_and_dog
 
-# 安裝 Python 依賴
-pip install -r src/requirements.txt
-
-# 如果 pip 版本過舊，先升級
-pip install --upgrade pip
+# 安裝 Python 依賴（預設使用系統環境；若想隔離可先 uv venv ~/elder_and_dog/.venv && source ~/elder_and_dog/.venv/bin/activate）
+uv pip install -r requirements.txt --force-reinstall
 
 # 安裝系統依賴（需 rosdep）
 sudo apt-get update
@@ -284,31 +281,31 @@ rosdep install --from-paths src --ignore-src -r -y
 
 ```bash
 # 在專案根目錄執行
-source /opt/ros/humble/setup.bash
+source /opt/ros/humble/setup.zsh
 colcon build
 
 # 首次編譯會花時間（10-20 分鐘）
 # 等待出現「Build will continue ...」和「Success」訊息
 ```
 
-### 6.4 配置虛擬機 bashrc
+### 6.4 配置虛擬機 zshrc
 
-為了每次登入都自動載入 ROS2 環境，編輯 `~/.bashrc`：
+為了每次登入都自動載入 ROS2 環境，編輯 `~/.zshrc`（若用 bash，改為 `.bashrc` 並將 `setup.zsh` 換成 `setup.bash`）：
 
 ```bash
-# 編輯 bashrc
-nano ~/.bashrc
+# 編輯 zshrc
+nano ~/.zshrc
 
 # 在檔案末尾添加以下行：
-source /opt/ros/humble/setup.bash
-source ~/elder_and_dog/install/setup.bash
+source /opt/ros/humble/setup.zsh
+source ~/elder_and_dog/install/setup.zsh
 export ROBOT_IP="192.168.12.1"
 export CONN_TYPE="webrtc"
 
 # 保存：Ctrl+O, Enter, Ctrl+X
 
-# 重新讀取 bashrc
-source ~/.bashrc
+# 重新讀取 zshrc
+source ~/.zshrc
 ```
 
 ---
@@ -323,7 +320,7 @@ ros2 --version
 # 應輸出：ROS 2 humble release
 
 # 2. 檢查工作空間
-source ~/elder_and_dog/install/setup.bash
+source ~/elder_and_dog/install/setup.zsh
 ros2 pkg list | grep go2
 # 應看到：go2_robot_sdk, go2_interfaces, search_logic 等
 
@@ -455,4 +452,3 @@ ping 192.168.12.1
 ---
 
 **有問題隨時回報，我會更新本指南！** 🚀
-
