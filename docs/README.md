@@ -27,16 +27,22 @@
 > ⚠️ 操作指南與 Quickstart 請改參閱 `01-guides/`（例如 `quickstart_w6_w9.md`、`remote_gpu_setup.md`、`QUICKSTART_GPU.md`、`QUICKSTART_NAVIGATION.md`）
 
 ### 01-guides · 操作手冊
-- [dependency_management.md](./01-guides/dependency_management.md) — Python 依賴鎖定策略、`uv` 使用方式  
-- [environment_setup_ubuntu.md](./01-guides/environment_setup_ubuntu.md) — Ubuntu + ROS2 + Go2 SDK 基礎環境  
-- [quickstart_w6_w9.md](./01-guides/quickstart_w6_w9.md) — W6-W9 每日任務 Checklist  
-- [remote_gpu_setup.md](./01-guides/remote_gpu_setup.md) — Mac → Windows VM → Quadro RTX 8000 三層拓樸設定  
-- [webrtc_troubleshooting.md](./01-guides/webrtc_troubleshooting.md) — WebRTC 常見錯誤與對應處置  
-- 
-- [slam_nav/phase1_execution_guide.md](./01-guides/slam_nav/phase1_execution_guide.md) — Phase 1（小空間）SLAM + Nav2 執行指南  
-- [slam_nav/phase2_execution_guide.md](./01-guides/slam_nav/phase2_execution_guide.md) — Phase 2（擴展空間）測試流程  
-- [slam_nav/quick_reference.md](./01-guides/slam_nav/quick_reference.md) — SLAM/Nav2 指令速查、常見陷阱  
-- [testing_and_verification.md](./03-testing/testing_and_verification.md) — TEST.sh 使用方式（亦列在測試區）
+- **基礎環境**
+  - [dependency_management.md](./01-guides/dependency_management.md) — Python 依賴鎖定策略、`uv` 使用方式  
+  - [environment_setup_ubuntu.md](./01-guides/environment_setup_ubuntu.md) — Ubuntu + ROS2 + Go2 SDK 安裝步驟（2025/11/19）  
+  - [mac_utm_vm_setup.md](./01-guides/mac_utm_vm_setup.md) — Mac M1 + UTM 虛擬機部署、橋接 Go2 Wi-Fi（2025/11/21）  
+  - [remote_gpu_setup.md](./01-guides/remote_gpu_setup.md) — Mac → Windows VM → Quadro RTX 8000 遠端 GPU 拓樸  
+  - [webrtc_troubleshooting.md](./01-guides/webrtc_troubleshooting.md) — WebRTC 常見錯誤與對應處置  
+  - [quickstart_w6_w9.md](./01-guides/quickstart_w6_w9.md) — W6-W9 每日任務 Checklist（2025/11/19）  
+- **SLAM / Nav2**
+  - [slam_nav/README.md](./01-guides/slam_nav/README.md) — Phase 1/2 測試總覽、交付物與故障排查導覽（2025/11/21）  
+  - [slam_nav/phase1_execution_guide.md](./01-guides/slam_nav/phase1_execution_guide.md) — Phase 1（1–2 坪）建圖 + 單點導航（2025/11/19）  
+  - [slam_nav/phase2_execution_guide.md](./01-guides/slam_nav/phase2_execution_guide.md) — Phase 2（4–5 坪）多點導航 + 巡邏（2025/11/19）  
+  - [slam_nav/quick_reference.md](./01-guides/slam_nav/quick_reference.md) — 複製貼上指令、5 大陷阱、常用命令（2025/11/19）  
+  - [phase1_quick_check.md](./01-guides/phase1_quick_check.md) — Phase 1 七項快速復核清單（3–5 分鐘）（2025/11/21）  
+- **模擬器 / 測試**
+  - [simulator_setup_checklist.md](./01-guides/simulator_setup_checklist.md) — Isaac Sim / go2_omniverse 部署進度與 topic 對應（2025/11/21）  
+  - [testing_and_verification.md](./03-testing/testing_and_verification.md) — TEST.sh 自動化腳本、覆蓋率與驗證 Checklist（測試區共用，2025/11/19）
 
 #### SLAM/Nav2 測試套件（`docs/01-guides/slam_nav/`）
 - [README](./01-guides/slam_nav/README.md) — Phase 1/2 測試總覽、核心知識點、交付物與故障排查導覽。
@@ -55,12 +61,15 @@
 - [package_structure.md](./02-design/package_structure.md) — `vision_vlm`, `coordinate_transformer`, `search_logic` 目錄規範
 
 ### 03-testing · 測試與驗收
-- [testing_plan.md](./03-testing/testing_plan.md) — W9 端到端測試行程  
-- [testing_and_verification.md](./03-testing/testing_and_verification.md) — 自動化腳本、覆蓋率與驗證 Checklist
+- [testing_plan.md](./03-testing/testing_plan.md) — W9 端到端測試行程（2025/11/19）  
+- [testing_and_verification.md](./03-testing/testing_and_verification.md) — 自動化腳本、覆蓋率與驗證 Checklist（2025/11/19）
 
 ### 04-notes · 歷程與手札
 - [CHANGELOG.md](./04-notes/CHANGELOG.md) — 文件與程式異動歷史  
-- [dev_notes/](./04-notes/dev_notes) — 每日開發紀錄（2025-11-18、2025-11-19）
+- [dev_notes/](./04-notes/dev_notes) — 每日開發紀錄、週報與測試檔案（含 `2025-11-18/19-dev.md`）  
+- [WEEK1_SUMMARY.md](./04-notes/dev_notes/WEEK1_SUMMARY.md) — Week 1 完成事項、後續待辦與交付清單（2025/11/21）  
+- [WEEK1_QUICKSTART.md](./04-notes/dev_notes/WEEK1_QUICKSTART.md) — Linux Phase 1 / UTM 安裝 / 模擬器清點複製貼上速查卡（2025/11/21）  
+- [20251121_slam_test.md](./04-notes/dev_notes/20251121_slam_test.md) — Phase 1/2 測試日誌範本（頻率、TF、地圖等記錄）（2025/11/21）
 
 ---
 
